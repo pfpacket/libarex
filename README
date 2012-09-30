@@ -1,0 +1,29 @@
+#
+#
+# README
+#
+#
+[*] Summary
+    AREX is a raw socket extension library for Boost.Asio
+    AREX of this library's name comes from Asio Rawsocket EXtension
+
+[+] Build
+    Header only. No need to build
+
+[+] Requirements
+    [+] Compile Time
+        [*] Make
+        [*] C++11 compiler
+        [*] Boost C++ Libraries
+    [+] Run time
+        [*] Root privilege
+
+[+] Tested environments
+    [+] Compiler
+        [*] gcc 4.6.3
+        [*] clang version 3.1
+    [+] Operating System
+        [*] Linux 3.2.0-26-generic-pae i686 GNU/Linux (Ubuntu 12.04)
+    [+] Libraries
+        [*] Boost C++ Libraries 1.51.0
+
