@@ -41,7 +41,6 @@
 #include <cstdint>
 
 #if defined(__linux__)
-
 // POSIX and socket headers
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -62,11 +61,8 @@
 #include <netpacket/packet.h>
 #include <signal.h>
 #include <wait.h>
-
 #elif defined(_MSC_VER) || defined(_WIN32)
-
 #include <winsock2.h>
-
 #endif
 
 // Boost headers
