@@ -100,7 +100,7 @@ namespace AREX_DEFINE_NAMESPACE = boost::asio::ip::arex;
 #include <arex/arex_options.hpp>
 #include <arex/arex_protocol.hpp>
 #include <arex/protocol_header.hpp>
-#include <arex/ip_header.hpp>
+#include <arex/ipv4_header.hpp>
 #include <arex/tcp_header.hpp>
 
 #endif  // BOOST_ASIO_AREX_HPP

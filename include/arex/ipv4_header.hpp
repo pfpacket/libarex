@@ -1,5 +1,5 @@
-#ifndef IP_HEADER_HPP
-#define IP_HEADER_HPP
+#ifndef BOOST_ASIO_AREX_IPV4_HEADER_HPP
+#define BOOST_ASIO_AREX_IPV4_HEADER_HPP
 
 #include <iostream>
 #include <cstdint>
@@ -7,16 +7,12 @@
 #include <netdb.h>
 #include <netinet/ip.h>
 #include <boost/asio/ip/address.hpp>
-#include "protocol_header.hpp"
+#include <arex/protocol_header.hpp>
 
 namespace boost {
 namespace asio {
 namespace ip {
 namespace arex {
-
-//
-// Define a ip header class
-//
 
 /*
 struct iphdr
@@ -43,14 +39,14 @@ struct iphdr
   };
 */
 
-class ip_header : public protocol_header {
+class ipv4_header : public protocol_header {
 public:
     enum { IP_LENGTH_UNIT = 4, IP_DEFAULT_TTL = IPDEFTTL }; 
     typedef struct iphdr header_type;
 
-    ip_header() : rep_{0} {}
-    explicit ip_header(const header_type &iph) : rep_(iph) {}
-    ~ip_header() {}
+    ipv4_header() : rep_{0} {}
+    explicit ipv4_header(const header_type &iph) : rep_(iph) {}
+    ~ipv4_header() {}
     
     uint8_t  version() const { return rep_.version; }
     uint8_t  ihl() const { return rep_.ihl; }
@@ -91,4 +87,4 @@ private:
 }   // namespace boost
 
 
-#endif // IP_HEADER_HPP
+#endif  // BOOST_ASIO_AREX_IPV4_HEADER_HPP

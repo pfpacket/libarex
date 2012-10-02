@@ -1,20 +1,12 @@
 #ifndef BOOST_ASIO_AREX_PACKET_SOCKET_SERVICE_HPP
 #define BOOST_ASIO_AREX_PACKET_SOCKET_SERVICE_HPP
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
-
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
 #include <boost/asio/error.hpp>
 #include <boost/asio/io_service.hpp>
 
-#if defined(BOOST_ASIO_HAS_IOCP)
-# include <boost/asio/detail/win_iocp_socket_service.hpp>
-#else
-# include <boost/asio/detail/reactive_socket_service.hpp>
-#endif
+#include <boost/asio/detail/reactive_socket_service.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -180,12 +172,15 @@ public:
     return service_impl_.bind(impl, endpoint, ec);
   }
 
+  //
+  // Linux packet socket doesn't support connect(2) system call
+  //
   /// Connect the raw socket to the specified endpoint.
-  boost::system::error_code connect(implementation_type& impl,
-      const endpoint_type& peer_endpoint, boost::system::error_code& ec)
-  {
-    return service_impl_.connect(impl, peer_endpoint, ec);
-  }
+  //boost::system::error_code connect(implementation_type& impl,
+  //    const endpoint_type& peer_endpoint, boost::system::error_code& ec)
+  //{
+  //  return service_impl_.connect(impl, peer_endpoint, ec);
+  //}
 
   /// Start an asynchronous connect.
   template <typename ConnectHandler>

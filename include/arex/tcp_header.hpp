@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <netdb.h>
 #include <netinet/tcp.h>
-#include "protocol_header.hpp"
+#include <arex/protocol_header.hpp>
 
 namespace boost {
 namespace asio {

@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <stdexcept>
-#include <arex/arex.hpp>
+#include <arex.hpp>
 
 using namespace std;
 namespace arex = boost::asio::ip::arex;
