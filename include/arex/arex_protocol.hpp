@@ -148,7 +148,7 @@ typedef basic_protocol<AF_INET, AF_INET6, SOCK_RAW, IPPROTO_TCP> raw_tcp;
 // packet socket including IP layer 
 typedef basic_protocol_ll<AF_PACKET, AF_PACKET, SOCK_DGRAM, arex::htons(ETH_P_IP)> packet_p_ip;
 // packet socket including lowest layer ethernet (lowest layer socket)
-typedef basic_protocol_ll<AF_PACKET, AF_PACKET, SOCK_RAW, arex::htons(ETH_P_ALL)> packet_eth_all;
+typedef basic_protocol_ll<AF_PACKET, AF_PACKET, SOCK_RAW, arex::htons(ETH_P_ALL)> packet_p_all;
 
 
 } // namespace arex

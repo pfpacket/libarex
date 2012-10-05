@@ -2,6 +2,7 @@
 #define BOOST_ASIO_AREX_ETHER_HEADER_HPP
 
 #include <array>
+#include <map>
 #include <string>
 #include <iostream>
 #include <cstdint>
@@ -67,6 +68,11 @@ public:
     {
         rep_.ether_type = arex::htons(type);
     }
+    
+    void eth_type(ether_type type)
+    {
+        rep_.ether_type = arex::htons(type);
+    }
 
     mac_address source() const
     {
@@ -80,7 +86,12 @@ public:
 
     uint16_t type() const
     {
-        return ntohs(rep_.ether_type);
+        return ::ntohs(rep_.ether_type);
+    }
+    
+    ether_type eth_type() const
+    {
+        return static_cast<ether_type>(::ntohs(rep_.ether_type));
     }
     
     int length() const
@@ -94,6 +105,29 @@ public:
     }
 
 };
+
+std::string ether_type_str(ethernet_header::ether_type type)
+{
+    typedef ethernet_header::ether_type ether_type;
+    static std::map<
+        ethernet_header::ether_type,
+        std::string
+        >
+    ether_id_to_str = {
+        {ether_type::xerox_pup, "Xerox PUP"},
+        {ether_type::sprite, "Sprite"},
+        {ether_type::ip, "IPv4"},
+        {ether_type::ipv6, "IPv6"},
+        {ether_type::arp, "ARP"},
+        {ether_type::reverse_arp, "Reverse ARP"},
+        {ether_type::appletalk, "AppleTalk"},
+        {ether_type::appletalk_arp, "AppleTalk ARP"},
+        {ether_type::vlan, "VLAN"},
+        {ether_type::ipx, "IPX"},
+        {ether_type::loopback, "Loopback"}
+    };
+    return ether_id_to_str.at(type);
+}
 
 
 }   // namespace arex

@@ -16,7 +16,9 @@ constexpr uint16_t htons(uint16_t s)
 
 constexpr uint32_t htonl(uint32_t s)
 {
-    return (s >> 16) | (s << 16);
+    return (
+        ((s & 0x000000FF) << 24) | ((s & 0x0000FF00) << 8) | ((s & 0xFF000000) >> 24) | ((s & 0x00FF0000) >> 8)
+    );
 }
 
 
