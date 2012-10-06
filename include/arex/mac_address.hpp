@@ -30,9 +30,9 @@ public:
 
     mac_address() : addr_{{0}} {}
     
-    mac_address(internal_type const &addr) : addr_(addr) {}
+    explicit mac_address(internal_type const &addr) : addr_(addr) {}
 
-    mac_address(bytes_type const &abin) : addr_{{0}}
+    explicit mac_address(bytes_type const &abin) : addr_{{0}}
     {
         std::copy(
             abin.begin(),
@@ -41,7 +41,7 @@ public:
             );
     }
     
-    mac_address(std::string const &str) : addr_{{0}}
+    explicit mac_address(std::string const &str) : addr_{{0}}
     {
         if( !ether_aton_r(str.c_str(), &addr_) )
             throw std::invalid_argument(
@@ -73,7 +73,7 @@ public:
         return mac_address(str);
     }
     
-    static mac_address from_string(std::string const str)
+    static mac_address from_string(std::string const &str)
     {
         return mac_address(str);
     }

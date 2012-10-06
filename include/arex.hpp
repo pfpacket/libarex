@@ -40,8 +40,6 @@
 // Use typedef-integer types in cstdint in arex
 #include <cstdint>
 
-#if defined(__linux__)
-// POSIX and socket headers
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -61,13 +59,16 @@
 #include <netpacket/packet.h>
 #include <signal.h>
 #include <wait.h>
-#elif defined(_MSC_VER) || defined(_WIN32)
-#include <winsock2.h>
-#endif
 
 // Boost headers
 #include <boost/system/error_code.hpp>
 #include <boost/system/system_error.hpp>
+
+
+// For glibc 2.1 (bug)
+#ifndef SOL_PACKET
+#define SOL_PACKET 263
+#endif
 
 
 //

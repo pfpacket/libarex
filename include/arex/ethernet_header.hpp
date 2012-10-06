@@ -4,6 +4,7 @@
 #include <array>
 #include <map>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <cstdint>
 #include <algorithm>
@@ -39,6 +40,7 @@ private:
 public:
 
     enum { header_length = sizeof rep_ };
+
     enum ether_type { 
         xerox_pup = ETHERTYPE_PUP, sprite = ETHERTYPE_SPRITE,
         ip = ETHERTYPE_IP, ipv6 = ETHERTYPE_IPV6,
@@ -69,9 +71,9 @@ public:
         rep_.ether_type = arex::htons(type);
     }
     
-    void eth_type(ether_type type)
+    void eth_type(ether_type etype)
     {
-        rep_.ether_type = arex::htons(type);
+        type(static_cast<uint16_t>(etype));
     }
 
     mac_address source() const
@@ -86,12 +88,24 @@ public:
 
     uint16_t type() const
     {
-        return ::ntohs(rep_.ether_type);
+        return arex::ntohs(rep_.ether_type);
     }
     
     ether_type eth_type() const
     {
-        return static_cast<ether_type>(::ntohs(rep_.ether_type));
+        return static_cast<ether_type>(type());
+    }
+
+    // Return if ethernet frame is DIX
+    bool is_dix() const
+    {
+        return (type() >= 1501);
+    }
+    
+    // Return if ethernet frame is 802.3
+    bool is_802_3() const
+    {
+        return (type() < 1501);
     }
     
     int length() const
@@ -126,7 +140,14 @@ std::string ether_type_str(ethernet_header::ether_type type)
         {ether_type::ipx, "IPX"},
         {ether_type::loopback, "Loopback"}
     };
-    return ether_id_to_str.at(type);
+    std::ostringstream ss;
+    try {
+        ss << ether_id_to_str.at(type);
+    }
+    catch (...) {
+        ss << "0x" << std::hex << static_cast<uint16_t>(type);
+    }
+    return ss.str();
 }
 
 
