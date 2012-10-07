@@ -24,6 +24,17 @@ namespace ip {
 namespace arex {
 
 
+enum ether_type
+{ 
+    xerox_pup = ETHERTYPE_PUP, sprite = ETHERTYPE_SPRITE,
+    ip = ETHERTYPE_IP, ipv6 = ETHERTYPE_IPV6,
+    arp = ETHERTYPE_ARP, reverse_arp = ETHERTYPE_REVARP,
+    appletalk = ETHERTYPE_AT, appletalk_arp = ETHERTYPE_AARP,
+    vlan = ETHERTYPE_VLAN, ipx = ETHERTYPE_IPX, 
+    loopback = ETHERTYPE_LOOPBACK
+};
+
+
 class ethernet_header
     : public protocol_header
 {
@@ -40,15 +51,6 @@ private:
 public:
 
     enum { header_length = sizeof rep_ };
-
-    enum ether_type { 
-        xerox_pup = ETHERTYPE_PUP, sprite = ETHERTYPE_SPRITE,
-        ip = ETHERTYPE_IP, ipv6 = ETHERTYPE_IPV6,
-        arp = ETHERTYPE_ARP, reverse_arp = ETHERTYPE_REVARP,
-        appletalk = ETHERTYPE_AT, appletalk_arp = ETHERTYPE_AARP,
-        vlan = ETHERTYPE_VLAN, ipx = ETHERTYPE_IPX, 
-        loopback = ETHERTYPE_LOOPBACK
-    };
 
     typedef etherhdr header_type;
 
@@ -120,11 +122,11 @@ public:
 
 };
 
-std::string ether_type_str(ethernet_header::ether_type type)
+std::string ether_type_str(ether_type type)
 {
-    typedef ethernet_header::ether_type ether_type;
+    typedef ether_type ether_type;
     static std::map<
-        ethernet_header::ether_type,
+        ether_type,
         std::string
         >
     ether_id_to_str = {

@@ -3,6 +3,7 @@
 
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <cstring>
 
 namespace boost {
 namespace asio {
@@ -96,6 +97,74 @@ public:
 private:
     int optval = Init;
 };
+
+
+class packet_socket_option {
+public:
+
+    typedef struct packet_mreq option_type;
+    typedef void(*mreq_functor_t)(option_type&);
+    
+    packet_socket_option() : name_(enable)
+    {
+    }
+
+    packet_socket_option(bool name) 
+        : name_(name ? enable : disable)
+    {
+    }
+
+    template<typename MreqFunctor>
+    packet_socket_option(bool name, MreqFunctor functor)
+        : name_(name ? enable : disable)
+    {
+        std::memset(&mreq_, 0, sizeof mreq_);
+        functor(mreq_);
+    }
+
+
+    template<typename Protocol>
+    int level(Protocol const& p) const
+    {
+        return SOL_PACKET;
+    }
+
+    template<typename Protocol>
+    int name(Protocol const& p) const
+    {
+        return name_;
+    }
+
+    template<typename Protocol>
+    void const* data(Protocol const& p) const
+    {
+        return reinterpret_cast<void const*>(&mreq_);
+    }
+
+    template<typename Protocol>
+    int size(Protocol const& p) const
+    {
+        return sizeof mreq_;
+    }
+        
+private:
+    enum name_boolean_t 
+        { enable = PACKET_ADD_MEMBERSHIP, disable = PACKET_DROP_MEMBERSHIP };
+    int name_;
+    option_type mreq_;  
+};
+
+
+// Option functor for packet_socket_option
+inline namespace packet_option_functor {
+
+void ps_opt_promisc(packet_socket_option::option_type& mreq, int if_index)
+{
+    mreq.mr_type = PACKET_MR_PROMISC;
+    mreq.mr_ifindex = if_index;
+}
+
+}   // inline namespace packet_option_functor
 
 
 // Binary option for IP_HDRINCL

@@ -59,6 +59,14 @@ public:
     uint16_t check() const { return ntohs(rep_.check); }
     uint32_t saddr() const { return ntohl(rep_.saddr); }
     uint32_t daddr() const { return ntohl(rep_.daddr); }
+    boost::asio::ip::address_v4 s_address() const
+    {
+        return boost::asio::ip::address_v4(ntohl(rep_.saddr));
+    }
+    boost::asio::ip::address_v4 d_address() const
+    {
+        return boost::asio::ip::address_v4(ntohl(rep_.daddr));
+    }
     
     void version(uint8_t version) { rep_.version = version; }
     void ihl(uint8_t ihl) { rep_.ihl = ihl; }

@@ -15,22 +15,40 @@ namespace arex = boost::asio::ip::arex;
 class packet_receiver {
 public:
 
-    packet_receiver(boost::asio::io_service &io, std::string const &dev)
+    packet_receiver(boost::asio::io_service& io, std::string const& dev)
         : counter_(0), io_service_(io), socket_(io, arex::packet_p_all::v4())
     {
-        socket_.bind(
-            // The first argument is not used for receiving packets
-            arex::packet_p_all::endpoint("FF:FF:FF:FF:FF:FF", dev)
+        // The first argument is not used for receiving packets
+        arex::packet_p_all::endpoint endpoint("FF:FF:FF:FF:FF:FF", dev);
+//      // Bind the spicified interface
+        socket_.bind(endpoint);
+        // promiscuous option
+        arex::packet_socket_option opt(
+            true,
+            // This function can change the underlying option structure
+            std::bind(&arex::ps_opt_promisc, _1, endpoint.if_index())
         );
+        // Enable promiscuous mode
+        socket_.set_option(opt);
         start_receive();
     }
 
-    static void print_ether_header(arex::ethernet_header const &eth)
+    static void print_ether_header(arex::ethernet_header const& eth)
     {
         cout << "Frame : " << (eth.is_802_3() ? "802.3" : "DIX") << endl;
         cout << "Source: " << eth.source() << endl;
         cout << "Dest  : " <<  eth.dest()  << endl;
         cout << "Type  : " << arex::ether_type_str(eth.eth_type()) << endl;
+    }
+
+    static void print_ip_header(arex::ipv4_header const& ip)
+    {
+        cout << "  -- IP header --" << endl;
+        cout << "From  : " << ip.s_address() << endl;
+        cout << "To    : " << ip.d_address() << endl;
+        cout << "Total : " << ip.tot_len() << endl;
+        cout << "ID    : " << hex << ip.id() << dec << endl;
+
     }
 
     void recv_handler(
@@ -45,9 +63,14 @@ public:
             std::istream is(&recv_buffer_);
             arex::ethernet_header ethh;
             is >> ethh;
-
-            cout << "---- ethernet header count=" << ++counter_ << " ----" << endl;
+            cout << "---- ethernet frame count=" << ++counter_ << " ----" << endl;
+            cout << "Length: " << size << endl;
             print_ether_header(ethh);
+            if( ethh.eth_type() == arex::ether_type::ip ) {
+                arex::ipv4_header ip;
+                is >> ip;
+                print_ip_header(ip);
+            }
             cout << endl;
 
             recv_buffer_.consume(recv_buffer_.size());
@@ -87,7 +110,7 @@ int main(int argc, char **argv)
         io_service.run();
 
     }
-    catch ( std::exception &e ) {
+    catch ( std::exception& e ) {
         cerr << "[-] Exception: " << e.what() << endl;
     }
     return EXIT_SUCCESS;
