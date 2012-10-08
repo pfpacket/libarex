@@ -43,6 +43,13 @@ class sll_endpoint {
 public:
 
     typedef InternetProtocol protocol_type;
+    
+    enum packet_type_t {
+        to_host = PACKET_HOST, broadcast = PACKET_BROADCAST, 
+        multicast = PACKET_MULTICAST, other_host = PACKET_OTHERHOST,
+        outgoing = PACKET_OUTGOING, loopback = PACKET_LOOPBACK,
+        fastroute = PACKET_FASTROUTE
+    };
 
     // Default constructor.
     sll_endpoint() : data_{}
@@ -115,10 +122,10 @@ public:
         return sizeof(data_);
     }
 
-    // Set underlying packet type for receiving
-    void packet_type(int pkttype)
+    // Get underlying packet type (Available after receiving
+    int packet_type() const
     {
-        data_.sll.sll_pkttype = pkttype;
+        return data_.sll.sll_pkttype;
     }
 
     int protocol_number() const

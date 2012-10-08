@@ -20,7 +20,7 @@ public:
     {
         // The first argument is not used for receiving packets
         arex::packet_p_all::endpoint endpoint("FF:FF:FF:FF:FF:FF", dev);
-//      // Bind the spicified interface
+        // Bind the spicified interface
         socket_.bind(endpoint);
         // promiscuous option
         arex::packet_socket_option opt(
@@ -43,12 +43,14 @@ public:
 
     static void print_ip_header(arex::ipv4_header const& ip)
     {
+        // protocol entry
+        arex::protocol_entry proto(ip.protocol());
         cout << "  -- IP header --" << endl;
         cout << "From  : " << ip.s_address() << endl;
         cout << "To    : " << ip.d_address() << endl;
+        cout << "Proto : " << proto.name() << dec << endl;
         cout << "Total : " << ip.tot_len() << endl;
-        cout << "ID    : " << hex << ip.id() << dec << endl;
-
+        cout << "ID    : " << hex << "0x" << ip.id() << dec << endl;
     }
 
     void recv_handler(
@@ -59,13 +61,24 @@ public:
         if ( ec )
             cerr << "[-] fatal: " << ec.message() << endl;
         else {
+            // Decode an ethernet header from streambuf
             recv_buffer_.commit(size);
             std::istream is(&recv_buffer_);
             arex::ethernet_header ethh;
             is >> ethh;
+            
+            typedef arex::packet_p_all::endpoint::packet_type_t pkttype;
+            int ptype = endpoint_from_.packet_type();
+            // Fillter out the packets which are not to us
+            if( ptype != pkttype::to_host )
+                goto RECVHDR_NEXT;
+
+            // Print the ethernet frame information
             cout << "---- ethernet frame count=" << ++counter_ << " ----" << endl;
             cout << "Length: " << size << endl;
             print_ether_header(ethh);
+
+            // If this frame contains an IP datagram
             if( ethh.eth_type() == arex::ether_type::ip ) {
                 arex::ipv4_header ip;
                 is >> ip;
@@ -73,6 +86,7 @@ public:
             }
             cout << endl;
 
+RECVHDR_NEXT:
             recv_buffer_.consume(recv_buffer_.size());
             start_receive();
         }

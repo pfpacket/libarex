@@ -10,9 +10,14 @@ namespace asio {
 namespace ip {
 namespace arex {
 
-
-// This meets SettableSocketOption requirements
+//
+//
+// These socket options meet SettableSocketOption requirements
 // See the documents of Boost.Asio for more information
+// Return values of level(), name(), data() and size() are passed to setsockopt(2)
+//
+//
+   
 template<typename ValueType = int>
 class basic_option {
 public:
@@ -63,6 +68,9 @@ private:
 };
 
 
+//
+// Socket option with template parameters of arguments to setsockopt(2)
+//
 template<int Level, int Name, bool Init = true>
 class binary_option {
 public:
@@ -99,6 +107,9 @@ private:
 };
 
 
+//
+// Socket option only for packet socket
+//
 class packet_socket_option {
 public:
 
@@ -114,11 +125,13 @@ public:
     {
     }
 
+    // MreqFunctor functor can change the underlying option structure
     template<typename MreqFunctor>
     packet_socket_option(bool name, MreqFunctor functor)
         : name_(name ? enable : disable)
     {
         std::memset(&mreq_, 0, sizeof mreq_);
+        // Functor is used for setting packet_mreq data up
         functor(mreq_);
     }
 
