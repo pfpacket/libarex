@@ -71,6 +71,18 @@
 #endif
 
 
+#define AREX_BEGIN_NAMESPACE \
+        namespace boost {\
+        namespace asio {\
+        namespace ip {\
+        namespace arex {
+
+#define AREX_END_NAMESPACE \
+        }\
+        }\
+        }\
+        }
+
 //
 // namespace for arex
 //
@@ -107,5 +119,6 @@ namespace AREX_DEFINE_NAMESPACE = boost::asio::ip::arex;
 #include <arex/ethernet_header.hpp>
 #include <arex/packet_socket_service.hpp>
 #include <arex/sll_endpoint.hpp>
+#include <arex/protocol_entry.hpp>
 
 #endif  // BOOST_ASIO_AREX_HPP

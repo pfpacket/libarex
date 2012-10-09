@@ -1,29 +1,44 @@
 #
 #
-# README
+#   README
 #
 #
 [*] Summary
-    AREX is a raw socket extension library for Boost.Asio
-    AREX of this library's name comes from Asio Rawsocket EXtension
+    Arex is a raw socket extension library for Boost.Asio
+    Arex allows you to use Linux packet sockets with powerful Boost.Asio
+    You can write the codes that performs sync/asynchronous operations like Asio
+    (`man 7 packet` for more information about packet sockets)
 
 [+] Build
-    Header only. No need to build
+    This library is Header-only. No need to build
 
 [+] Requirements
     [+] Compile Time
-        [*] Make
         [*] C++11 compiler
-        [*] Boost C++ Libraries
-    [+] Run time
-        [*] Root privilege
+        [*] Boost C++ Libraries (Asio , System)
+        [*] pthread (used by Asio)
+    [+] Runtime
+        [*] EUID 0 or the CAP_NET_RAW capability for opening packet sockets
 
 [+] Tested environments
     [+] Compiler
-        [*] gcc 4.6.3
+        [*] gcc 4.6.3 / 4.7.2
         [*] clang version 3.1
     [+] Operating System
         [*] Linux 3.2.0-26-generic-pae i686 GNU/Linux (Ubuntu 12.04)
     [+] Libraries
         [*] Boost C++ Libraries 1.51.0
 
+[+] Functions and supports
+    [+] Linux packet sockets using Asio interfaces
+        [*] Packet socket service
+        [*] Endpoint for packet sockets
+        [*] Protocol for packet sockets
+    [*] Socket options for generic sockets
+    [*] Socket options specialized for packet socket
+    [*] Layer 4 protocol entry
+    [*] Miscellaneous protocols' headers
+
+[*] TODO
+    [*] Filltering system of received packets
+    [*] Rewrite new Asio socket for packet sockets
