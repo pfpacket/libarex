@@ -119,6 +119,11 @@ public:
     {
         return reinterpret_cast<char*>(&rep_);
     }
+    
+    char const* get_header() const
+    {
+        return reinterpret_cast<char const*>(&rep_);
+    }
 
 };
 

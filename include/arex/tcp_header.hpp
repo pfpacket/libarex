@@ -107,11 +107,29 @@ public:
     void check(uint16_t check) { rep_.check = htons(check); }
     void urg_ptr(uint16_t urg_ptr) { rep_.urg_ptr = htons(urg_ptr); }
 
-    int length() const { return sizeof(rep_); }
-    char* get_header() { return reinterpret_cast<char*>(&rep_); }
-    const struct tcphdr& get() const { return rep_; }
+    int length() const
+    {
+        return sizeof(rep_);
+    }
 
-    void compute_checksum(uint32_t srcaddr, uint32_t destaddr) {
+    char* get_header()
+    {
+        return reinterpret_cast<char*>(&rep_);
+    }
+    
+    char const* get_header() const
+    {
+        return reinterpret_cast<char const*>(&rep_);
+    }
+
+    // deprecated
+    header_type const& get() const
+    {
+        return rep_;
+    }
+
+    void compute_checksum(uint32_t srcaddr, uint32_t destaddr)
+    {
         check(0);
         tcp_checksum tc = {{0}, {0}};
         tc.pseudo.ip_src   = htonl(srcaddr);
@@ -123,11 +141,12 @@ public:
         rep_.check = ((checksum(reinterpret_cast<uint16_t*>(&tc), sizeof(struct tcp_checksum))));
     }
 
-    void compute_checksum(const std::string &srcaddr, const std::string &destaddr) {
+    void compute_checksum(const std::string &srcaddr, const std::string &destaddr)
+    {
         compute_checksum(
-                boost::asio::ip::address_v4::from_string(srcaddr).to_ulong(), 
-                boost::asio::ip::address_v4::from_string(destaddr).to_ulong()
-                );
+            boost::asio::ip::address_v4::from_string(srcaddr).to_ulong(), 
+            boost::asio::ip::address_v4::from_string(destaddr).to_ulong()
+        );
     }
 
 private:

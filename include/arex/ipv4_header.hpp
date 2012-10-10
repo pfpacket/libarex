@@ -45,9 +45,13 @@ public:
     enum { IP_LENGTH_UNIT = 4, IP_DEFAULT_TTL = IPDEFTTL }; 
     typedef struct iphdr header_type;
 
-    ipv4_header() : rep_{0} {}
-    explicit ipv4_header(const header_type &iph) : rep_(iph) {}
-    ~ipv4_header() {}
+    ipv4_header() : rep_{0}
+    {
+    }
+
+    explicit ipv4_header(header_type const& iph) : rep_(iph)
+    {
+    }
     
     uint8_t  version() const { return rep_.version; }
     uint8_t  ihl() const { return rep_.ihl; }
@@ -60,6 +64,7 @@ public:
     uint16_t check() const { return ntohs(rep_.check); }
     uint32_t saddr() const { return ntohl(rep_.saddr); }
     uint32_t daddr() const { return ntohl(rep_.daddr); }
+    
     boost::asio::ip::address_v4 s_address() const
     {
         return boost::asio::ip::address_v4(ntohl(rep_.saddr));
@@ -82,8 +87,20 @@ public:
     void saddr(uint32_t saddr) { rep_.saddr = htonl(saddr); }
     void daddr(uint32_t daddr) { rep_.daddr = htonl(daddr); }
 
-    int length() const { return sizeof(rep_); }
-    char *get_header() { return reinterpret_cast<char*>(&rep_); }
+    int length() const
+    {
+        return sizeof(rep_);
+    }
+    
+    char *get_header()
+    {
+        return reinterpret_cast<char*>(&rep_);
+    }
+    
+    char const* get_header() const
+    {
+        return reinterpret_cast<char const*>(&rep_);
+    }
      
 private:
    header_type rep_;

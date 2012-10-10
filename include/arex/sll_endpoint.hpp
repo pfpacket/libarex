@@ -44,11 +44,16 @@ public:
 
     typedef InternetProtocol protocol_type;
     
-    enum packet_type_t {
-        to_host = PACKET_HOST, broadcast = PACKET_BROADCAST, 
-        multicast = PACKET_MULTICAST, other_host = PACKET_OTHERHOST,
-        outgoing = PACKET_OUTGOING, loopback = PACKET_LOOPBACK,
-        fastroute = PACKET_FASTROUTE
+    // man 7 packet
+    enum pkttype
+    {
+        to_host     =   PACKET_HOST,
+        broadcast   =   PACKET_BROADCAST,
+        multicast   =   PACKET_MULTICAST,
+        other_host  =   PACKET_OTHERHOST,
+        outgoing    =   PACKET_OUTGOING,
+        loopback    =   PACKET_LOOPBACK,
+        fastroute   =   PACKET_FASTROUTE
     };
 
     // Default constructor.
@@ -60,13 +65,18 @@ public:
         data_.sll.sll_protocol = protocol_type::v4().protocol();
     }
 
-    sll_endpoint(std::string const &macaddr, std::string const &device_name) : data_{}
+    sll_endpoint(std::string const& macaddr, std::string const& device_name) : data_{}
     {
         std::memset(&data_, sizeof data_, 0);
         data_.sll.sll_family = AF_PACKET;
         data_.sll.sll_halen= IFHWADDRLEN;
         data_.sll.sll_protocol = protocol_type::v4().protocol();
         data_.sll.sll_ifindex	= if_nametoindex(device_name.c_str());
+        namespace system = boost::system;
+        if ( data_.sll.sll_ifindex == 0 )
+            boost::asio::detail::throw_error(
+               system::error_code(system::errc::no_such_device, system::system_category())
+            );
         //  data_.v4.sin_port =
         //    boost::asio::detail::socket_ops::host_to_network_short(port_num);
          ether_aton_r(macaddr.c_str(), reinterpret_cast<struct ether_addr *>(&data_.sll.sll_addr));
@@ -122,7 +132,7 @@ public:
         return sizeof(data_);
     }
 
-    // Get underlying packet type (Available after receiving
+    // Get underlying packet type (Available after receiving)
     int packet_type() const
     {
         return data_.sll.sll_pkttype;

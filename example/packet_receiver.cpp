@@ -67,7 +67,7 @@ public:
             arex::ethernet_header ethh;
             is >> ethh;
             
-            typedef arex::packet_p_all::endpoint::packet_type_t pkttype;
+            typedef arex::packet_p_all::endpoint::pkttype pkttype;
             int ptype = endpoint_from_.packet_type();
             // Fillter out the packets which are not to us
             if( ptype != pkttype::to_host )

@@ -136,10 +136,12 @@ private:
 
     void store_entry_elem(entry_type const& ent)
     {
+        aliases_list_t tmp;
+        for ( char **p = ent.p_aliases; *p != nullptr; ++p )
+            tmp.push_back(*p);
+        aliases_.swap(tmp);
         protocol_number_ = ent.p_proto;
         official_name_   = ent.p_name;
-        for ( char **p = ent.p_aliases; *p != nullptr; ++p )
-            aliases_.push_back(*p);
     }
 
     int protocol_number_;
