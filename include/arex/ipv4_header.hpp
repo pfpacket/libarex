@@ -87,7 +87,7 @@ public:
     void saddr(uint32_t saddr) { rep_.saddr = htonl(saddr); }
     void daddr(uint32_t daddr) { rep_.daddr = htonl(daddr); }
 
-    int length() const
+    unsigned int length() const
     {
         return sizeof(rep_);
     }

@@ -107,7 +107,7 @@ public:
     void check(uint16_t check) { rep_.check = htons(check); }
     void urg_ptr(uint16_t urg_ptr) { rep_.urg_ptr = htons(urg_ptr); }
 
-    int length() const
+    unsigned int length() const
     {
         return sizeof(rep_);
     }

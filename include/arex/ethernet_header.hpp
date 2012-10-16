@@ -26,12 +26,17 @@ namespace arex {
 
 enum ether_type
 { 
-    xerox_pup = ETHERTYPE_PUP, sprite = ETHERTYPE_SPRITE,
-    ip = ETHERTYPE_IP, ipv6 = ETHERTYPE_IPV6,
-    arp = ETHERTYPE_ARP, reverse_arp = ETHERTYPE_REVARP,
-    appletalk = ETHERTYPE_AT, appletalk_arp = ETHERTYPE_AARP,
-    vlan = ETHERTYPE_VLAN, ipx = ETHERTYPE_IPX, 
-    loopback = ETHERTYPE_LOOPBACK
+    xerox_pup   =   ETHERTYPE_PUP,
+    sprite      =   ETHERTYPE_SPRITE,
+    ip          =   ETHERTYPE_IP,
+    ipv6        =   ETHERTYPE_IPV6,
+    arp         =   ETHERTYPE_ARP,
+    reverse_arp =   ETHERTYPE_REVARP,
+    appletalk   =   ETHERTYPE_AT,
+    appletalk_arp = ETHERTYPE_AARP,
+    vlan        =   ETHERTYPE_VLAN,
+    ipx         =   ETHERTYPE_IPX, 
+    loopback    =   ETHERTYPE_LOOPBACK
 };
 
 
@@ -110,7 +115,7 @@ public:
         return (type() < 1501);
     }
     
-    int length() const
+    unsigned int length() const
     {
         return header_length;
     }

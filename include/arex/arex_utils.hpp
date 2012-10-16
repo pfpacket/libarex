@@ -1,12 +1,15 @@
 #ifndef BOOST_ASIO_AREX_UTILS_HPP
 #define BOOST_ASIO_AREX_UTILS_HPP
 
+#include <boost/asio/streambuf.hpp>
 
 namespace boost {
 namespace asio {
 namespace ip {
 namespace arex {
 
+
+inline namespace network {
 
 constexpr uint16_t htons(uint16_t s)
 {
@@ -31,6 +34,17 @@ constexpr uint32_t ntohl(uint32_t s)
     return htonl(s);
 }
 
+}   // inline namespace network
+
+
+inline namespace generic {
+
+char const* streambuf_to_ptr(boost::asio::streambuf const& streambuf)
+{
+    return boost::asio::buffer_cast<char const*>(streambuf.data());
+}
+
+}   // inline namespace generic
 
 }   // namespace arex
 }   // namespace ip
