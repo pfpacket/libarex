@@ -21,7 +21,7 @@ public:
     protocol_header() {}
     virtual ~protocol_header() {}
     
-    virtual unsigned int length() const = 0;
+    virtual std::size_t length() const = 0;
     virtual char* get_header() = 0;
     virtual char const* get_header() const = 0;
     
@@ -55,13 +55,13 @@ public:
     friend bool streambuf_to_header(
         protocol_header& header,
         boost::asio::streambuf const& buf,
-        unsigned int offset = 0
+        std::size_t offset = 0
     );
 
 //    friend bool overwrite_streambuf(
 //        protocol_header const& header,
 //        boost::asio::streambuf const& buf,
-//        unsigned int offset = 0);
+//        std::size_t offset = 0);
 
 protected:
 
@@ -111,7 +111,7 @@ void copy_buffer_to_header(protocol_header& header, char const* buf)
 // Otherwise return true
 bool streambuf_to_header(
     protocol_header& header,
-    boost::asio::streambuf const& buf, unsigned int offset)
+    boost::asio::streambuf const& buf, std::size_t offset)
 {
     // Length check
     if ( buf.size() < header.length() + offset )

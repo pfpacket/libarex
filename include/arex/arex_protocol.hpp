@@ -20,121 +20,122 @@ namespace arex {
 
 
 template<int Family, int FamilyV6, int Type, int Protocol>
-class basic_protocol
+class basic_protocol_raw
 {
 public:
-  typedef basic_endpoint<basic_protocol> endpoint;
+    
+    typedef basic_endpoint<basic_protocol_raw>   endpoint;
+    typedef basic_raw_socket<basic_protocol_raw> socket;
+    typedef basic_resolver<basic_protocol_raw>   resolver;
 
-  static basic_protocol v4()
-  {
-    return basic_protocol(Protocol, Family);
-  }
+    static basic_protocol_raw v4()
+    {
+        return basic_protocol_raw(Protocol, Family);
+    }
 
-  static basic_protocol v6()
-  {
-    return basic_protocol(Protocol, FamilyV6);
-  }
+    static basic_protocol_raw v6()
+    {
+        return basic_protocol_raw(Protocol, FamilyV6);
+    }
 
-  int type() const
-  {
-    return Type;
-  }
+    int family() const
+    {
+        return family_;
+    }
+    
+    int type() const
+    {
+        return Type;
+    }
 
-  int protocol() const
-  {
-    return protocol_;
-  }
+    int protocol() const
+    {
+        return protocol_;
+    }
 
-  int family() const
-  {
-    return family_;
-  }
 
-  typedef basic_raw_socket<basic_protocol> socket;
+    friend bool operator==(const basic_protocol_raw& p1, const basic_protocol_raw& p2)
+    {
+        return p1.protocol_ == p2.protocol_ && p1.family_ == p2.family_;
+    }
 
-  typedef basic_resolver<basic_protocol> resolver;
-
-  friend bool operator==(const basic_protocol& p1, const basic_protocol& p2)
-  {
-    return p1.protocol_ == p2.protocol_ && p1.family_ == p2.family_;
-  }
-
-  friend bool operator!=(const basic_protocol& p1, const basic_protocol& p2)
-  {
-    return p1.protocol_ != p2.protocol_ || p1.family_ != p2.family_;
-  }
+    friend bool operator!=(const basic_protocol_raw& p1, const basic_protocol_raw& p2)
+    {
+        return p1.protocol_ != p2.protocol_ || p1.family_ != p2.family_;
+    }
 
 private:
   
-  explicit basic_protocol(int protocol_id, int protocol_family)
-    : protocol_(protocol_id),
-      family_(protocol_family)
-  {
-  }
+    explicit basic_protocol_raw(int protocol_id, int protocol_family)
+        :  protocol_(protocol_id),
+           family_(protocol_family)
+    {
+    }
 
-  int protocol_;
-  int family_;
+    int protocol_;
+    int family_;
 };
 
 
 //
 // Basic protocol for sockaddr_ll (packet socket)
 //
-template<int Family, int FamilyV6, int Type, int Protocol>
+template<int Family, int Type, int Protocol>
 class basic_protocol_ll
 {
 public:
-  typedef boost::asio::ip::arex::sll_endpoint<basic_protocol_ll> endpoint;
 
-  static basic_protocol_ll v4()
-  {
-    return basic_protocol_ll(Protocol, Family);
-  }
+    typedef boost::asio::ip::arex::sll_endpoint<basic_protocol_ll> endpoint;
+    typedef basic_raw_socket<basic_protocol_ll, packet_socket_service<basic_protocol_ll>> socket;
+    // Resolver not supported
+    //typedef basic_resolver<basic_protocol_ll> resolver;
+    
+    static basic_protocol_ll proto()
+    {
+        return basic_protocol_ll(Protocol, Family);
+    }
 
-  static basic_protocol_ll v6()
-  {
-    return basic_protocol_ll(Protocol, FamilyV6);
-  }
+    // deprecated
+    static basic_protocol_ll v4()
+    {
+        return basic_protocol_ll(Protocol, Family);
+    }
 
-  int type() const
-  {
-    return Type;
-  }
+    int family() const
+    {
+        return family_;
+    }
+    
+    int type() const
+    {
+        return Type;
+    }
 
-  int protocol() const
-  {
-    return protocol_;
-  }
+    int protocol() const
+    {
+        return protocol_;
+    }
 
-  int family() const
-  {
-    return family_;
-  }
+    friend bool operator==(const basic_protocol_ll& p1, const basic_protocol_ll& p2)
+    {
+        return p1.protocol_ == p2.protocol_ && p1.family_ == p2.family_;
+    }
 
-  typedef basic_raw_socket<basic_protocol_ll, packet_socket_service<basic_protocol_ll>> socket;
-
-  typedef basic_resolver<basic_protocol_ll> resolver;
-
-  friend bool operator==(const basic_protocol_ll& p1, const basic_protocol_ll& p2)
-  {
-    return p1.protocol_ == p2.protocol_ && p1.family_ == p2.family_;
-  }
-
-  friend bool operator!=(const basic_protocol_ll& p1, const basic_protocol_ll& p2)
-  {
-    return p1.protocol_ != p2.protocol_ || p1.family_ != p2.family_;
-  }
+    friend bool operator!=(const basic_protocol_ll& p1, const basic_protocol_ll& p2)
+    {   
+        return p1.protocol_ != p2.protocol_ || p1.family_ != p2.family_;
+    }
 
 private:
- 
-  explicit basic_protocol_ll(int protocol_id, int protocol_family)
-    : protocol_(protocol_id),
-      family_(protocol_family)
-  {
-  }
 
-  int protocol_;
-  int family_;
+    explicit basic_protocol_ll(int protocol_id, int protocol_family)
+      : protocol_(protocol_id),
+        family_(protocol_family)
+    {
+    }
+
+    int protocol_;
+    int family_;
 };
 
 
@@ -142,13 +143,15 @@ private:
 // pre-typedef well-known protocols
 //
 // raw socket for ICMP
-typedef basic_protocol<AF_INET, AF_INET6, SOCK_RAW, IPPROTO_ICMP> raw_icmp;
+typedef basic_protocol_raw<AF_INET, AF_INET6, SOCK_RAW, IPPROTO_ICMP> raw_icmp;
 // raw socket for TCP
-typedef basic_protocol<AF_INET, AF_INET6, SOCK_RAW, IPPROTO_TCP> raw_tcp;
+typedef basic_protocol_raw<AF_INET, AF_INET6, SOCK_RAW, IPPROTO_TCP> raw_tcp;
 // packet socket including IP layer 
-typedef basic_protocol_ll<AF_PACKET, AF_PACKET, SOCK_DGRAM, arex::htons(ETH_P_IP)> packet_p_ip;
+typedef basic_protocol_ll<AF_PACKET, SOCK_DGRAM, arex::htons(ETH_P_IP)> packet_p_ip;
+// packet socket including IPv6 layer 
+typedef basic_protocol_ll<AF_PACKET, SOCK_DGRAM, arex::htons(ETH_P_IPV6)> packet_p_ipv6;
 // packet socket including lowest layer ethernet (lowest layer socket)
-typedef basic_protocol_ll<AF_PACKET, AF_PACKET, SOCK_RAW, arex::htons(ETH_P_ALL)> packet_p_all;
+typedef basic_protocol_ll<AF_PACKET, SOCK_RAW, arex::htons(ETH_P_ALL)> packet_p_all;
 
 
 } // namespace arex

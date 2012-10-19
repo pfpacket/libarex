@@ -1,14 +1,11 @@
 #ifndef BOOST_ASIO_AREX_ETHER_HEADER_HPP
 #define BOOST_ASIO_AREX_ETHER_HEADER_HPP
 
-#include <array>
 #include <map>
 #include <string>
 #include <sstream>
-#include <iostream>
 #include <cstdint>
 #include <algorithm>
-#include <stdexcept>
 #include <net/ethernet.h>
 #include <netinet/ether.h>
 #include <netinet/if_ether.h>
@@ -26,17 +23,17 @@ namespace arex {
 
 enum ether_type
 { 
-    xerox_pup   =   ETHERTYPE_PUP,
-    sprite      =   ETHERTYPE_SPRITE,
-    ip          =   ETHERTYPE_IP,
-    ipv6        =   ETHERTYPE_IPV6,
-    arp         =   ETHERTYPE_ARP,
-    reverse_arp =   ETHERTYPE_REVARP,
-    appletalk   =   ETHERTYPE_AT,
-    appletalk_arp = ETHERTYPE_AARP,
-    vlan        =   ETHERTYPE_VLAN,
-    ipx         =   ETHERTYPE_IPX, 
-    loopback    =   ETHERTYPE_LOOPBACK
+    xerox_pup     =   ETHERTYPE_PUP,
+    sprite        =   ETHERTYPE_SPRITE,
+    ip            =   ETHERTYPE_IP,
+    ipv6          =   ETHERTYPE_IPV6,
+    arp           =   ETHERTYPE_ARP,
+    reverse_arp   =   ETHERTYPE_REVARP,
+    appletalk     =   ETHERTYPE_AT,
+    appletalk_arp =   ETHERTYPE_AARP,
+    vlan          =   ETHERTYPE_VLAN,
+    ipx           =   ETHERTYPE_IPX, 
+    loopback      =   ETHERTYPE_LOOPBACK
 };
 
 
@@ -115,7 +112,7 @@ public:
         return (type() < 1501);
     }
     
-    unsigned int length() const
+    std::size_t length() const
     {
         return header_length;
     }
@@ -134,23 +131,22 @@ public:
 
 std::string ether_type_str(ether_type type)
 {
-    typedef ether_type ether_type;
     static std::map<
         ether_type,
         std::string
         >
     ether_id_to_str = {
-        {ether_type::xerox_pup, "Xerox PUP"},
-        {ether_type::sprite, "Sprite"},
-        {ether_type::ip, "IPv4"},
-        {ether_type::ipv6, "IPv6"},
-        {ether_type::arp, "ARP"},
-        {ether_type::reverse_arp, "Reverse ARP"},
-        {ether_type::appletalk, "AppleTalk"},
+        {ether_type::xerox_pup,     "Xerox PUP"},
+        {ether_type::sprite,        "Sprite"},
+        {ether_type::ip,            "IPv4"},
+        {ether_type::ipv6,          "IPv6"},
+        {ether_type::arp,           "ARP"},
+        {ether_type::reverse_arp,   "Reverse ARP"},
+        {ether_type::appletalk,     "AppleTalk"},
         {ether_type::appletalk_arp, "AppleTalk ARP"},
-        {ether_type::vlan, "VLAN"},
-        {ether_type::ipx, "IPX"},
-        {ether_type::loopback, "Loopback"}
+        {ether_type::vlan,          "VLAN"},
+        {ether_type::ipx,           "IPX"},
+        {ether_type::loopback,      "Loopback"}
     };
     std::ostringstream ss;
     try {
