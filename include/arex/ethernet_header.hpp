@@ -37,8 +37,7 @@ enum ether_type
 };
 
 
-class ethernet_header
-    : public protocol_header
+class ethernet_header : public protocol_header
 {
 private:
 
@@ -46,7 +45,7 @@ private:
         mac_address::internal_type h_dest;
         mac_address::internal_type h_source;
         uint16_t ether_type;
-    };
+    } __attribute__((packed));
 
     etherhdr rep_;
 
@@ -56,9 +55,14 @@ public:
 
     typedef etherhdr header_type;
 
-    ethernet_header() : rep_{{{0}}, {{0}}, 0} {}
+    ethernet_header() : rep_{{{0}}, {{0}}, 0}
+    {
+    }
+
     ethernet_header(ethernet_header const &header) 
-        : rep_(header.rep_) {}
+        : rep_(header.rep_)
+    {
+    }
 
     void source(mac_address const &source)
     {
@@ -131,11 +135,8 @@ public:
 
 std::string ether_type_str(ether_type type)
 {
-    static std::map<
-        ether_type,
-        std::string
-        >
-    ether_id_to_str = {
+    static std::map<ether_type, std::string> 
+     const ether_id_to_str = {
         {ether_type::xerox_pup,     "Xerox PUP"},
         {ether_type::sprite,        "Sprite"},
         {ether_type::ip,            "IPv4"},
@@ -153,7 +154,7 @@ std::string ether_type_str(ether_type type)
         ss << ether_id_to_str.at(type);
     }
     catch (...) {
-        ss << "0x" << std::hex << static_cast<uint16_t>(type);
+        ss << "0x" << std::hex << static_cast<std::uint16_t>(type);
     }
     return ss.str();
 }

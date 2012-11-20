@@ -43,13 +43,11 @@ public:
 
     template<typename Elem, typename Traits>
     friend std::basic_ostream<Elem, Traits>& operator<<(
-        std::basic_ostream<Elem, Traits> &os,
-        protocol_header& header
+        std::basic_ostream<Elem, Traits> &os, protocol_header& header
     );
 
     friend void copy_buffer_to_header(
-        protocol_header& header,
-        char const* buf
+        protocol_header& header, char const* buf
     );
     
     friend bool streambuf_to_header(
@@ -58,26 +56,7 @@ public:
         std::size_t offset = 0
     );
 
-//    friend bool overwrite_streambuf(
-//        protocol_header const& header,
-//        boost::asio::streambuf const& buf,
-//        std::size_t offset = 0);
-
 protected:
-
-    static unsigned short checksum(unsigned short *buf, int bufsz)
-    {
-      unsigned long sum = 0;
-        while( bufsz > 1 ) {
-            sum += *buf++;
-            bufsz -= 2;
-        }
-        if( bufsz == 1 )
-            sum += *(unsigned char *)buf;
-        sum = (sum & 0xffff) + (sum >> 16);
-        sum = (sum & 0xffff) + (sum >> 16);
-        return ~sum;
-    }
      
     virtual void prepare_to_read(std::istream&) {}
     virtual void prepare_to_write(std::ostream&) {}
@@ -91,6 +70,11 @@ std::basic_istream<Elem, Traits>& operator>>(std::basic_istream<Elem, Traits> &i
     return is.read(header.get_header(), header.length());
 }
 
+template<typename Elem, typename Traits>
+std::basic_istream<Elem, Traits>& operator>>(std::basic_istream<Elem, Traits> &is, protocol_header const& header)
+{
+    return is.read(header.get_header(), header.length());
+}
 
 template<typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(std::basic_ostream<Elem, Traits> &os, protocol_header& header)
@@ -99,12 +83,16 @@ std::basic_ostream<Elem, Traits>& operator<<(std::basic_ostream<Elem, Traits> &o
     return os.write(header.get_header(), header.length());
 }
 
+template<typename Elem, typename Traits>
+std::basic_ostream<Elem, Traits>& operator<<(std::basic_ostream<Elem, Traits> &os, protocol_header const& header)
+{
+    return os.write(header.get_header(), header.length());
+}
 
 void copy_buffer_to_header(protocol_header& header, char const* buf)
 {
     std::copy(buf, buf + header.length(), header.get_header());
 }
-
 
 // Copy buffer contents to protocol_header
 // Return false if buffer length is not enough to read
@@ -114,15 +102,11 @@ bool streambuf_to_header(
     boost::asio::streambuf const& buf, std::size_t offset)
 {
     // Length check
-    if ( buf.size() < header.length() + offset )
+    if (buf.size() < header.length() + offset)
         return false;
     char const* head = 
         boost::asio::buffer_cast<char const*>(buf.data()) + offset;
-    std::copy(
-        head,
-        head + header.length(),
-        header.get_header()
-    );
+    std::copy(head, head + header.length(), header.get_header());
     return true;
 }
 

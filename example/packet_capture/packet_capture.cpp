@@ -16,7 +16,7 @@ class packet_receiver {
 public:
 
     packet_receiver(boost::asio::io_service& io, std::string const& dev)
-        : counter_(0), io_service_(io), socket_(io, arex::packet_p_all::v4())
+        : counter_(0), socket_(io, arex::packet_p_all::v4())
     {
         // The first argument is not used for receiving packets
         arex::packet_p_all::endpoint endpoint("FF:FF:FF:FF:FF:FF", dev);
@@ -49,7 +49,7 @@ public:
         cout << "From  : " << ip.s_address() << endl;
         cout << "To    : " << ip.d_address() << endl;
         cout << "Proto : " << proto.name() << dec << endl;
-        cout << "Total : " << ip.tot_len() << endl;
+        cout << "Total : " << ip.total_length() << endl;
         cout << "ID    : " << hex << "0x" << ip.id() << dec << endl;
     }
 
@@ -103,7 +103,6 @@ RECVHDR_NEXT:
 
 private:
     int counter_;
-    boost::asio::io_service &io_service_;
     arex::packet_p_all::socket socket_;
     arex::packet_p_all::endpoint endpoint_from_;
     boost::asio::streambuf recv_buffer_;

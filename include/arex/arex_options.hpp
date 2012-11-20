@@ -135,7 +135,6 @@ public:
         functor(mreq_);
     }
 
-
     template<typename Protocol>
     int level(Protocol const& p) const
     {
@@ -171,6 +170,8 @@ private:
 // Option functor for packet_socket_option
 inline namespace packet_option_functor {
 
+// packet_socket_option guarantees that `option_type& mreq`, 
+//      the first argument of mreq functor is cleared to zero
 void ps_opt_promisc(packet_socket_option::option_type& mreq, int if_index)
 {
     mreq.mr_type = PACKET_MR_PROMISC;

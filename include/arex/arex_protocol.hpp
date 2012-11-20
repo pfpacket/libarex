@@ -53,7 +53,6 @@ public:
         return protocol_;
     }
 
-
     friend bool operator==(const basic_protocol_raw& p1, const basic_protocol_raw& p2)
     {
         return p1.protocol_ == p2.protocol_ && p1.family_ == p2.family_;

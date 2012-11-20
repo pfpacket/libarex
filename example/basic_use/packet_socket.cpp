@@ -38,10 +38,10 @@ void ip_handler(boost::system::error_code const &ec, size_t size,
         cout << "[*] ip_handler: Received packet:" << endl;
         cout << "IP version: " << static_cast<int>(ip.version()) << endl;
         cout << "Protocol: " << static_cast<int>(ip.protocol()) << endl;
-        cout << "Header length: " << ip.ihl() * arex::ipv4_header::IP_LENGTH_UNIT << endl;
-        cout << "Total length: " << ip.tot_len() << endl;
-        cout << "From: " << arex::protocol_header::address_to_string(ip.saddr()) << endl;
-        cout << "To: " << arex::protocol_header::address_to_string(ip.daddr()) << endl;
+        cout << "Header length: " << ip.header_length() * ip.length_unit << endl;
+        cout << "Total length: " << ip.total_length() << endl;
+        cout << "From: " << ip.address_to_string(ip.saddr()) << endl;
+        cout << "To: " << ip.address_to_string(ip.daddr()) << endl;
     }
 }
 

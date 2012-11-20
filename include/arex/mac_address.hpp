@@ -43,7 +43,7 @@ public:
     
     explicit mac_address(std::string const &str) : addr_{{0}}
     {
-        if( !ether_aton_r(str.c_str(), &addr_) )
+        if (!ether_aton_r(str.c_str(), &addr_))
             throw std::invalid_argument(
                 "invalid_argument: could not convert to internal type: " + str
             );
@@ -108,8 +108,7 @@ private:
 
 template<typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits> &operator<<(
-        std::basic_ostream<Elem, Traits> &os,
-        mac_address const &addr)
+    std::basic_ostream<Elem, Traits> &os, mac_address const &addr)
 {
     os << addr.to_string();
     return os;

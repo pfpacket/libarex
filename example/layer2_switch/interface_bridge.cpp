@@ -26,7 +26,6 @@ public:
         std::string const& nic1, std::string const& nic2) 
         :   counter_(0),
             nic1_(nic1), nic2_(nic2),
-            io_service_(ios),
             socket1_(ios, arex::packet_p_all::v4()),
             socket2_(ios, arex::packet_p_all::v4()),
             start1_(std::bind(&interface_bridge::recv_handler, this, _1, _2, NIC1)),
@@ -56,7 +55,6 @@ private:
     
     std::uint64_t counter_;
     std::string const nic1_, nic2_;
-    boost::asio::io_service& io_service_;
     arex::packet_p_all::socket socket1_, socket2_;
     arex::packet_p_all::endpoint sender1_, sender2_;
     buffer_type buffer1_, buffer2_;
@@ -115,7 +113,7 @@ void interface_bridge::recv_handler(
 {
     if ( err )
         cout << "[-] " << ifname_[ifnum] << ": Fatal: " << err.message() << endl;
-    else {
+    else { do {
         buffer_type& buffer = ifbuf_.at(ifnum);
         buffer.commit(size);
         
@@ -123,21 +121,18 @@ void interface_bridge::recv_handler(
         typedef arex::packet_p_all::endpoint::pkttype pkttype;
         int pkt_type = ifep_.at(ifnum).packet_type();
         if ((1522 < size || size < 32) || (pkt_type == pkttype::outgoing))
-        {
-            start_receive(ifnum);
-            return;
-        }
-        
+            break;
+
         arex::ethernet_header ethh;
         arex::streambuf_to_header(ethh, buffer);
-        cout << (boost::format("No.%d  %s: %4d bytes  ") % ++counter_ % ifname_[ifnum] % size).str();
+        cout << (boost::format("No.%d\t%s\t%4d bytes  ") % ++counter_ % ifname_[ifnum] % size).str();
         print_ether_header(ethh);
         
         ifsoc_.at(ifdest_[ifnum]).send_to(
             buffer.data(),
             arex::packet_p_all::endpoint("0:0:0:0:0:0", ifname_[ifdest_[ifnum]])
         );
-    }
+    } while ( false ); }
     start_receive(ifnum);
 }
 

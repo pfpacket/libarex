@@ -44,7 +44,7 @@ public:
             &result_
         );
        
-        if ( result_ == nullptr || retval != 0 )
+        if (result_ == nullptr || retval != 0)
             throw_error(retval);
 
         store_entry_elem(result_buf_);
@@ -63,7 +63,7 @@ public:
             &result_
         );
        
-        if ( result_ == nullptr || retval != 0 )
+        if (result_ == nullptr || retval != 0)
             throw_error(retval);
         
         store_entry_elem(result_buf_);
@@ -137,7 +137,7 @@ private:
     void store_entry_elem(entry_type const& ent)
     {
         aliases_list_t tmp;
-        for ( char **p = ent.p_aliases; *p != nullptr; ++p )
+        for (char **p = ent.p_aliases; *p != nullptr; ++p)
             tmp.push_back(*p);
         aliases_.swap(tmp);
         protocol_number_ = ent.p_proto;
