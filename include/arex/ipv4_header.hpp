@@ -1,6 +1,7 @@
 #ifndef BOOST_ASIO_AREX_IPV4_HEADER_HPP
 #define BOOST_ASIO_AREX_IPV4_HEADER_HPP
 
+#include <arex/common.hpp>
 #include <iostream>
 #include <cstdint>
 #include <string>

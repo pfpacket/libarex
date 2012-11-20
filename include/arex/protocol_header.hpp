@@ -1,6 +1,7 @@
 #ifndef PROTOCOL_HEADER_HPP
 #define PROTOCOL_HEADER_HPP
 
+#include <arex/common.hpp>
 #include <iostream>
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/streambuf.hpp>

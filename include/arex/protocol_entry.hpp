@@ -1,6 +1,7 @@
 #ifndef BOOST_ASIO_AREX_PROTOCOL_ENTRY_HPP
 #define BOOST_ASIO_AREX_PROTOCOL_ENTRY_HPP
 
+#include <arex/common.hpp>
 
 // Start arex namespace
 AREX_BEGIN_NAMESPACE

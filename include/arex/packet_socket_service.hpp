@@ -1,6 +1,7 @@
 #ifndef BOOST_ASIO_AREX_PACKET_SOCKET_SERVICE_HPP
 #define BOOST_ASIO_AREX_PACKET_SOCKET_SERVICE_HPP
 
+#include <arex/common.hpp>
 #include <boost/asio/detail/config.hpp>
 #include <cstddef>
 #include <boost/asio/error.hpp>

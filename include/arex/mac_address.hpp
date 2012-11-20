@@ -2,6 +2,7 @@
 #define BOOST_ASIO_AREX_MAC_ADDRSS_HPP
 
 
+#include <arex/common.hpp>
 #include <array>
 #include <string>
 #include <iostream>

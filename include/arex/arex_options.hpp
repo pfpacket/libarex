@@ -1,6 +1,7 @@
 #ifndef BOOST_ASIO_EXT_OPTIONS_HPP_
 #define BOOST_ASIO_EXT_OPTIONS_HPP_
 
+#include <arex/common.hpp>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <cstring>

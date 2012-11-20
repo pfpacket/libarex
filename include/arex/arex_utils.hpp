@@ -1,6 +1,8 @@
 #ifndef BOOST_ASIO_AREX_UTILS_HPP
 #define BOOST_ASIO_AREX_UTILS_HPP
 
+#include <arex/common.hpp>
+#include <arex/arex_utils.hpp>
 #include <boost/asio/streambuf.hpp>
 
 namespace boost {
