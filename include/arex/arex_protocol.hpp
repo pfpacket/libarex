@@ -9,7 +9,6 @@
 #include <boost/asio/ip/basic_resolver_iterator.hpp>
 #include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/detail/push_options.hpp>
-#include <arex/arex_utils.hpp>
 #include <sys/socket.h>
 #include <arex/common.hpp>
 #include <arex/arex_utils.hpp>
