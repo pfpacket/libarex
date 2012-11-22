@@ -10,6 +10,8 @@
 #include <boost/asio/ip/basic_resolver_query.hpp>
 #include <boost/asio/detail/push_options.hpp>
 #include <sys/socket.h>
+#include <arex/common.hpp>
+#include <arex/arex_utils.hpp>
 #include <arex/sll_endpoint.hpp>
 #include <arex/packet_socket_service.hpp>
 
@@ -52,7 +54,6 @@ public:
     {
         return protocol_;
     }
-
 
     friend bool operator==(const basic_protocol_raw& p1, const basic_protocol_raw& p2)
     {

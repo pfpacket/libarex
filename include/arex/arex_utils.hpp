@@ -1,6 +1,8 @@
 #ifndef BOOST_ASIO_AREX_UTILS_HPP
 #define BOOST_ASIO_AREX_UTILS_HPP
 
+#include <arex/common.hpp>
+#include <arex/arex_utils.hpp>
 #include <boost/asio/streambuf.hpp>
 
 namespace boost {
@@ -10,6 +12,7 @@ namespace arex {
 
 
 inline namespace network {
+
 
 constexpr uint16_t htons(uint16_t s)
 {
@@ -26,23 +29,40 @@ constexpr uint32_t htonl(uint32_t s)
 
 constexpr uint16_t ntohs(uint16_t s)
 {
-    return htons(s);
+    return arex::htons(s);
 }
 
 constexpr uint32_t ntohl(uint32_t s)
 {
-    return htonl(s);
+    return arex::htonl(s);
 }
+
+std::uint16_t checksum(std::uint16_t *buf, int bufsz)
+{
+    unsigned long sum = 0;
+    while (bufsz > 1) {
+        sum += *buf++;
+        bufsz -= 2;
+    }
+    if (bufsz == 1)
+        sum += *(unsigned char *)buf;
+    sum = (sum & 0xffff) + (sum >> 16);
+    sum = (sum & 0xffff) + (sum >> 16);
+    return ~sum;
+}
+
 
 }   // inline namespace network
 
 
 inline namespace generic {
 
+
 char const* streambuf_to_ptr(boost::asio::streambuf const& streambuf)
 {
     return boost::asio::buffer_cast<char const*>(streambuf.data());
 }
+
 
 }   // inline namespace generic
 

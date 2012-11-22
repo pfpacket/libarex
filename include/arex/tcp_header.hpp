@@ -41,37 +41,35 @@ namespace arex {
 //           TCP Header Format From the Figure 3 of RFC 793
 //
 
-// For struct tcphdr
-/*
-   struct tcphdr {
-    u_int16_t source;
-    u_int16_t dest;
-    u_int32_t seq;
-    u_int32_t ack_seq;
-    u_int16_t res1:4;
-    u_int16_t doff:4;
-    u_int16_t fin:1;
-    u_int16_t syn:1;
-    u_int16_t rst:1;
-    u_int16_t psh:1;
-    u_int16_t ack:1;
-    u_int16_t urg:1;
-    u_int16_t res2:2;
-    u_int16_t window;
-    u_int16_t check;
-    u_int16_t urg_ptr;
-  };
-*/
+// Internal TCP header type
+// struct tcphdr {
+//     u_int16_t source;
+//     u_int16_t dest;
+//     u_int32_t seq;
+//     u_int32_t ack_seq;
+//     u_int16_t res1:4;
+//     u_int16_t doff:4;
+//     u_int16_t fin:1;
+//     u_int16_t syn:1;
+//     u_int16_t rst:1;
+//     u_int16_t psh:1;
+//     u_int16_t ack:1;
+//     u_int16_t urg:1;
+//     u_int16_t res2:2;
+//     u_int16_t window;
+//     u_int16_t check;
+//     u_int16_t urg_ptr;
+// };
+
 
 class tcp_header : public protocol_header {
 public:
- 
-    enum { DEFAULT_WINVAL = 4096 };
+
+    enum { default_window_value = 4096 };
     typedef struct tcphdr header_type;
 
     tcp_header() : rep_{0} {}
     explicit tcp_header(const header_type &tcph) : rep_(tcph) {}
-    ~tcp_header() {}
 
     uint16_t source() const { return ntohs(rep_.source); }
     uint16_t dest() const { return ntohs(rep_.dest); }
@@ -163,16 +161,16 @@ private:
     //       TCP PSEUDO HEADER FROM RFC 793
     //
     struct tcph_pseudo {    // TCP pseudo header for header checksum
-            uint32_t ip_src;    // Source IP address
-            uint32_t ip_dst;    // Destination IP address
-            uint8_t zero;      // Always 0
-            uint8_t  protocol;  // IPPROTO_TCP
-            uint16_t length;    // tcp header length + payload length (Not contained pseudo header)
+        uint32_t ip_src;    // Source IP address
+        uint32_t ip_dst;    // Destination IP address
+        uint8_t zero;       // Always 0
+        uint8_t  protocol;  // IPPROTO_TCP
+        uint16_t length;    // tcp header length + payload length (Not contained pseudo header)
     };
 
     struct tcp_checksum {
-            struct tcph_pseudo pseudo;
-            header_type tcphdr;
+        struct tcph_pseudo pseudo;
+        header_type tcphdr;
     };
     
     header_type rep_;

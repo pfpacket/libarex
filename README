@@ -40,5 +40,6 @@
     [*] Miscellaneous protocols' headers
 
 [+] TODO
-    [*] Filltering system of received packets
+    [*] Filtering system of received packets
     [*] Rewrite new Asio socket for packet sockets
+    [*] Support netlink socket
