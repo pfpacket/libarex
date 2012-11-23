@@ -7,16 +7,29 @@ AREX_ROOT=`pwd`
 BOOST_ROOT=~/boost/
 CXX=g++
 CXX_FLAGS="-std=c++0x -Wall"
-CXX_INCL="-I $BOOST_ROOT/include/ -I $AREX_ROOT/include"
-CXX_LIBS="-L $BOOST_ROOT/lib/ -lpthread -lboost_system"
 EXEC_FILE=example.out
-SIGNAL_HANDLER='clean_up_obj ; echo ; echo [!] Keyboard interrupt occurred \(SIGINT\)'
-EXAMPLE_DIR_LIST=$(find $AREX_ROOT/example/* -type d)
+SIGNAL_HANDLER="clean_up_obj ; echo ; echo [!] Keyboard interrupt occurred \(SIGINT\)"
+NO_REMOVE_OBJ=0
+
+usage()
+{
+    echo "Usage: build_test.sh [-abcflnh]"
+    echo "Options:"
+    echo "   -a arg    specify libarex root path (default: ./)"
+    echo "   -b arg    specify Boost root path   (default: ~/boost/)"
+    echo "   -c arg    specify C++ compiler      (default: g++)"
+    echo "   -f arg    add additional flags passed to compiler"
+    echo "   -l        clean up object files"
+    echo "   -n        never remove object files"
+    echo "   -h        print this help and exit"
+}
 
 clean_up_obj()
 {
-    find $AREX_ROOT/example/ -name "*.o" -exec rm -f {} \;
-    find $AREX_ROOT/example/ -name $EXEC_FILE -exec rm -f {} \;
+    if [ $NO_REMOVE_OBJ -eq 0 ]; then
+        find $AREX_ROOT/example/ -name "*.o" -exec rm -f {} \;
+        find $AREX_ROOT/example/ -name $EXEC_FILE -exec rm -f {} \;
+    fi
 }
 
 is_leaf_dir()
@@ -26,6 +39,32 @@ is_leaf_dir()
     return $RET
 }
 
+die()
+{
+    clean_up_obj
+    exit 1
+}
+
+while getopts a:b:c:f:lnh OPTION
+do
+    case $OPTION in
+        a)  AREX_ROOT=$OPTARG  ;;
+        b)  BOOST_ROOT=$OPTARG ;;
+        c)  CXX=$OPTARG ;;
+        f)  CXX_FLAGS="$CXX_FLAGS $OPTARG" ;;
+        l)  clean_up_obj
+            exit 0 ;;
+        n)  NO_REMOVE_OBJ=1 ;;
+        h)  usage
+            exit 0 ;;
+        \?) usage
+            exit 1 ;;
+    esac
+done
+
+CXX_INCL="-I $BOOST_ROOT/include/ -I $AREX_ROOT/include"
+CXX_LIBS="-L $BOOST_ROOT/lib/ -lpthread -lboost_system"
+EXAMPLE_DIR_LIST=`find $AREX_ROOT/example/* -type d`
 if [ $? -ne 0 ]; then
     echo
     echo [-] Failed to find the directory of example/
@@ -46,8 +85,7 @@ do
             echo
             echo [-] $SRC : Failed to build an example ...aborted
             echo     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-            clean_up_obj
-            exit 1
+            die
         fi
     done
 
@@ -58,8 +96,7 @@ do
         echo
         echo [-] $EXAMPLE_DIR : Failed to link object files ...aborted
         echo     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        clean_up_obj
-        exit 1
+        die
     fi
 done
 
