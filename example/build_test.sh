@@ -1,0 +1,105 @@
+#!/bin/sh
+#
+#       example/build_test.sh
+#   A simple script for building examples and tests
+#
+AREX_ROOT=`pwd`
+BOOST_ROOT=~/boost/
+CXX=g++
+CXX_FLAGS="-std=c++0x -Wall"
+EXEC_FILE=example.out
+SIGNAL_HANDLER="clean_up_obj ; echo ; echo [!] Keyboard interrupt occurred \(SIGINT\)"
+NO_REMOVE_OBJ=0
+
+usage()
+{
+    echo "Usage: build_test.sh [-abcflnh]"
+    echo "Options:"
+    echo "   -a arg    specify libarex root path (default: ./)"
+    echo "   -b arg    specify Boost root path   (default: ~/boost/)"
+    echo "   -c arg    specify C++ compiler      (default: g++)"
+    echo "   -f arg    add additional flags passed to compiler"
+    echo "   -l        clean up object files"
+    echo "   -n        never remove object files"
+    echo "   -h        print this help and exit"
+}
+
+clean_up_obj()
+{
+    if [ $NO_REMOVE_OBJ -eq 0 ]; then
+        find $AREX_ROOT/example/ -name "*.o" -exec rm -f {} \;
+        find $AREX_ROOT/example/ -name $EXEC_FILE -exec rm -f {} \;
+    fi
+}
+
+is_leaf_dir()
+{
+    RET=1
+    [ "`find "$1" -maxdepth 1 -type d | wc -l`" = "1" ] && RET=0
+    return $RET
+}
+
+die()
+{
+    clean_up_obj
+    exit 1
+}
+
+while getopts a:b:c:f:lnh OPTION
+do
+    case $OPTION in
+        a)  AREX_ROOT=$OPTARG  ;;
+        b)  BOOST_ROOT=$OPTARG ;;
+        c)  CXX=$OPTARG ;;
+        f)  CXX_FLAGS="$CXX_FLAGS $OPTARG" ;;
+        l)  clean_up_obj
+            exit 0 ;;
+        n)  NO_REMOVE_OBJ=1 ;;
+        h)  usage
+            exit 0 ;;
+        \?) usage
+            exit 1 ;;
+    esac
+done
+
+CXX_INCL="-I $BOOST_ROOT/include/ -I $AREX_ROOT/include"
+CXX_LIBS="-L $BOOST_ROOT/lib/ -lpthread -lboost_system"
+EXAMPLE_DIR_LIST=`find $AREX_ROOT/example/* -type d`
+if [ $? -ne 0 ]; then
+    echo
+    echo [-] Failed to find the directory of example/
+    echo [-] Test failed ...compiling aborted
+    exit 1
+fi
+
+trap "$SIGNAL_HANDLER" INT
+for EXAMPLE_DIR in $EXAMPLE_DIR_LIST
+do
+    is_leaf_dir $EXAMPLE_DIR || continue
+    ONE_EXAMPLE=$(find $EXAMPLE_DIR -name "*.cpp")
+    for SRC in $ONE_EXAMPLE
+    do
+        echo [*] Compiling $SRC ...
+        $CXX $CXX_FLAGS $CXX_INCL -c $SRC -o ${SRC%.cpp}.o
+        if [ $? -ne 0 ]; then
+            echo
+            echo [-] $SRC : Failed to build an example ...aborted
+            echo     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            die
+        fi
+    done
+
+    OBJECTS=`find $EXAMPLE_DIR -name "*.o"`
+    echo [*] Linking $OBJECTS ...
+    $CXX $CXX_FLAGS $CXX_LIBS $OBJECTS -o $EXAMPLE_DIR/$EXEC_FILE
+    if [ $? -ne 0 ]; then
+        echo
+        echo [-] $EXAMPLE_DIR : Failed to link object files ...aborted
+        echo     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        die
+    fi
+done
+
+clean_up_obj
+echo [*] No compilation error detected
+exit 0
