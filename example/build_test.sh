@@ -8,7 +8,6 @@ BOOST_ROOT=~/boost/
 CXX=g++
 CXX_FLAGS="-std=c++0x -Wall"
 EXEC_FILE=example.out
-SIGNAL_HANDLER="clean_up_obj ; echo ; echo [!] Keyboard interrupt occurred \(SIGINT\)"
 NO_REMOVE_OBJ=0
 
 usage()
@@ -32,6 +31,13 @@ clean_up_obj()
     fi
 }
 
+signal_handler()
+{
+    clean_up_obj
+    echo
+    echo [!] Keyboard interrupt occurred \(SIGINT\)
+}
+
 is_leaf_dir()
 {
     RET=1
@@ -42,7 +48,14 @@ is_leaf_dir()
 die()
 {
     clean_up_obj
+    echo [-] Fatal Error occurred: Abort
     exit 1
+}
+
+start_test()
+{
+    $AREX_ROOT/example/test/byte_order/$EXEC_FILE  || die
+    $AREX_ROOT/example/test/mac_address/$EXEC_FILE || die
 }
 
 while getopts a:b:c:f:lnh OPTION
@@ -72,7 +85,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-trap "$SIGNAL_HANDLER" INT
+trap "signal_handler" INT
 for EXAMPLE_DIR in $EXAMPLE_DIR_LIST
 do
     is_leaf_dir $EXAMPLE_DIR || continue
@@ -83,7 +96,7 @@ do
         $CXX $CXX_FLAGS $CXX_INCL -c $SRC -o ${SRC%.cpp}.o
         if [ $? -ne 0 ]; then
             echo
-            echo [-] $SRC : Failed to build an example ...aborted
+            echo [-] $SRC : Failed to build an example
             echo     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
             die
         fi
@@ -94,12 +107,16 @@ do
     $CXX $CXX_FLAGS $CXX_LIBS $OBJECTS -o $EXAMPLE_DIR/$EXEC_FILE
     if [ $? -ne 0 ]; then
         echo
-        echo [-] $EXAMPLE_DIR : Failed to link object files ...aborted
+        echo [-] $EXAMPLE_DIR : Failed to link object files
         echo     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         die
     fi
 done
+echo [*] No compilation error detected
+
+echo [*] Starting test ...
+start_test
+echo [*] Test code passed. No error detected
 
 clean_up_obj
-echo [*] No compilation error detected
 exit 0
