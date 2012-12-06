@@ -1,5 +1,5 @@
 
-#define BOOST_ASIO_ENABLE_HANDLER_TRACKING
+//#define BOOST_ASIO_ENABLE_HANDLER_TRACKING
 #include <iostream>
 #include <string>
 #include <map>
@@ -14,6 +14,7 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <arex.hpp>
+#include "route.hpp"
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -21,6 +22,17 @@ using boost::system::error_code;
 namespace asio   = boost::asio;
 namespace arex   = boost::asio::ip::arex;
 namespace chrono = std::chrono;
+
+std::uint32_t get_ifaddr(std::string const& ifname)
+{
+    int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    struct ifreq ifr;
+    ifr.ifr_addr.sa_family = AF_INET;
+    strncpy(ifr.ifr_name, ifname.c_str(), IFNAMSIZ-1);
+    ioctl(fd, SIOCGIFADDR, &ifr);
+    close(fd);
+    return arex::ntohl(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr.s_addr);
+}
 
 class syn_port_mapper {
     struct scan_info {
@@ -165,6 +177,7 @@ private:
     arex::raw_tcp::socket socket_;
     arex::raw_tcp::endpoint destination_, sender_;
     std::map<int, port_state> port_map_;
+    rd_routing_table rt_;   // kernel IP routing table
 };
 
 std::tuple<int, int>    // random_source_port, random_seq
@@ -180,8 +193,10 @@ syn_port_mapper::set_syn_segment(buffer_type& sbuffer, int port)
     iphdr.fragment_offset(IP_DF);
     iphdr.ttl(iphdr.default_ttl);
     iphdr.protocol(IPPROTO_TCP);
-    iphdr.saddr(iphdr.address_to_binary(/*"127.0.0.1"*/"192.168.1.29"));
-    iphdr.daddr(iphdr.address_to_binary(destination_.address().to_string()));
+    std::uint32_t daddr = destination_.address().to_v4().to_ulong();
+    // Select the IP path referencing kernel IP routing table
+    iphdr.saddr(get_ifaddr(rt_.find(daddr)->ifname));
+    iphdr.daddr(daddr);
 
     std::uint16_t source = rand();
     std::uint32_t  seq   = rand();
