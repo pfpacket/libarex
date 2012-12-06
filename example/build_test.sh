@@ -9,6 +9,8 @@ CXX=g++
 CXX_FLAGS="-std=c++0x -Wall"
 EXEC_FILE=example.out
 NO_REMOVE_OBJ=0
+EXEC_TEST_SUITE=1
+EXAMPLE_DIR_LIST=""
 
 usage()
 {
@@ -17,6 +19,7 @@ usage()
     echo "   -a arg    specify libarex root path (default: ./)"
     echo "   -b arg    specify Boost root path   (default: ~/boost/)"
     echo "   -c arg    specify C++ compiler      (default: g++)"
+    echo "   -d arg    set target directory as arg"
     echo "   -f arg    add additional flags passed to compiler"
     echo "   -l        clean up object files"
     echo "   -n        never remove object files"
@@ -58,12 +61,14 @@ start_test()
     $AREX_ROOT/example/test/mac_address/$EXEC_FILE || die
 }
 
-while getopts a:b:c:f:lnh OPTION
+while getopts a:b:c:d:f:lnh OPTION
 do
     case $OPTION in
         a)  AREX_ROOT=$OPTARG  ;;
         b)  BOOST_ROOT=$OPTARG ;;
         c)  CXX=$OPTARG ;;
+        d)  EXAMPLE_DIR_LIST=$OPTARG
+            EXEC_TEST_SUITE=0  ;;
         f)  CXX_FLAGS="$CXX_FLAGS $OPTARG" ;;
         l)  clean_up_obj
             exit 0 ;;
@@ -77,7 +82,9 @@ done
 
 CXX_INCL="-I $BOOST_ROOT/include/ -I $AREX_ROOT/include"
 CXX_LIBS="-L $BOOST_ROOT/lib/ -lpthread -lboost_system"
-EXAMPLE_DIR_LIST=`find $AREX_ROOT/example/* -type d`
+if [ "${EXAMPLE_DIR_LIST}" = "" ]; then
+    EXAMPLE_DIR_LIST=`find $AREX_ROOT/example/* -type d`
+fi
 if [ $? -ne 0 ]; then
     echo
     echo [-] Failed to find the directory of example/
@@ -114,9 +121,11 @@ do
 done
 echo [*] No compilation error detected
 
-echo [*] Starting test ...
-start_test
-echo [*] Test code passed. No error detected
+if [ $EXEC_TEST_SUITE -eq 1 ]; then
+    echo [*] Starting test ...
+    start_test
+    echo [*] Test code passed. No error detected
+fi
 
 clean_up_obj
 exit 0
