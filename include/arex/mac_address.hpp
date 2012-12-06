@@ -29,9 +29,13 @@ public:
     typedef struct ether_addr internal_type;
     typedef std::array<uint8_t, addr_length> bytes_type;
 
-    mac_address() : addr_{{0}} {}
+    mac_address() : addr_{{0}}
+    {
+    }
     
-    explicit mac_address(internal_type const &addr) : addr_(addr) {}
+    explicit mac_address(internal_type const &addr) : addr_(addr)
+    {
+    }
 
     explicit mac_address(bytes_type const &abin) : addr_{{0}}
     {
@@ -58,10 +62,10 @@ public:
 
     bool operator==(mac_address const &other) const
     {
-        bool ret = true;
         for( int i = 0; i < addr_length; ++i )
-            ret &= (addr_.ether_addr_octet[i] == other.addr_.ether_addr_octet[i]);
-        return ret;
+            if ((addr_.ether_addr_octet[i] != other.addr_.ether_addr_octet[i]))
+                return false;
+        return true;
     }
     
     bool operator!=(mac_address const &other) const

@@ -9,7 +9,6 @@
 #include <boost/format.hpp>
 #include <arex.hpp>
 
-using namespace std;
 using std::placeholders::_1;
 using std::placeholders::_2;
 namespace arex = boost::asio::ip::arex;
@@ -112,7 +111,7 @@ void interface_bridge::recv_handler(
     int size, netif_t ifnum)
 {
     if ( err )
-        cout << "[-] " << ifname_[ifnum] << ": Fatal: " << err.message() << endl;
+        std::cout << "[-] " << ifname_[ifnum] << ": Fatal: " << err.message() << std::endl;
     else { do {
         buffer_type& buffer = ifbuf_.at(ifnum);
         buffer.commit(size);
@@ -125,7 +124,7 @@ void interface_bridge::recv_handler(
 
         arex::ethernet_header ethh;
         arex::streambuf_to_header(ethh, buffer);
-        cout << (boost::format("No.%d\t%s\t%4d bytes  ") % ++counter_ % ifname_[ifnum] % size).str();
+        std::cout << (boost::format("No.%d\t%s\t%4d bytes  ") % ++counter_ % ifname_[ifnum] % size).str();
         print_ether_header(ethh);
         
         ifsoc_.at(ifdest_[ifnum]).send_to(
@@ -160,8 +159,8 @@ arex::mac_address interface_bridge::ifhw_address(std::string const& dev)
 
 void interface_bridge::print_ether_header(arex::ethernet_header const& eth)
 {
-    cout << eth.source() << " --> " << eth.dest() 
-        << "  type=" << arex::ether_type_str(eth.eth_type()) << endl;
+    std::cout << eth.source() << " --> " << eth.dest() 
+        << "  type=" << arex::ether_type_str(eth.eth_type()) << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -179,7 +178,7 @@ int main(int argc, char **argv)
         io_service.run();
     }
     catch ( std::exception &e ) {
-        cerr << "[-] Exception: " << e.what() << endl;
+        std::cerr << "[-] Exception: " << e.what() << std::endl;
         exit_code = EXIT_FAILURE;
     }
     return exit_code;
