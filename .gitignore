@@ -1,3 +1,4 @@
 a.out
 *.o
 .fuse_hidden*
+example.out
