@@ -25,6 +25,7 @@
 #include <arex/protocol_header.hpp>
 #include <arex/sll_endpoint.hpp>
 #include <arex/tcp_header.hpp>
+#include <arex/route.hpp>
 
 
 #endif  // BOOST_ASIO_AREX_HPP

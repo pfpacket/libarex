@@ -14,7 +14,7 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <arex.hpp>
-#include "route.hpp"
+#include <arex/route.hpp>
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -177,7 +177,7 @@ private:
     arex::raw_tcp::socket socket_;
     arex::raw_tcp::endpoint destination_, sender_;
     std::map<int, port_state> port_map_;
-    rd_routing_table rt_;   // kernel IP routing table
+    arex::rd_routing_table rt_;   // kernel IP routing table
 };
 
 std::tuple<int, int>    // random_source_port, random_seq
