@@ -52,11 +52,9 @@ public:
     typedef boost::asio::ip::address_v4 address_v4;
     struct route_info__ {
         std::string ifname;
-        address_v4 dest, gateway;
-        unsigned int flags;
+        address_v4 dest, gateway, netmask;
         int refcnt, use, metric;
-        address_v4  netmask;
-        unsigned int mtu, window, irtt;
+        unsigned int flags, mtu, window, irtt;
     };
     typedef struct route_info__         route_info;
     typedef std::vector<route_info>     rilist_t;
@@ -79,26 +77,26 @@ public:
         );
     }
     
-    const_iterator find(std::uint32_t target) const
-    {
-        return this->find(address_v4(target));
-    }
-
     const_iterator find(std::string const& target) const
     {
         boost::system::error_code ec;
         auto address = address_v4::from_string(target, ec);
         if (ec)
             throw illegal_address(ec.message() + ": " + target);
-        return this->find(address);
+        return this->find(address.to_ulong());
     }
 
     const_iterator find(address_v4 const& target) const
     {
+        return this->find(target.to_ulong());
+    }
+
+    const_iterator find(std::uint32_t target) const
+    {
         auto it = rilist_.begin(), default_rt = get_default_route();
         for (; it != rilist_.end(); ++it) {
             if (it == default_rt) continue;
-            if ((target.to_ulong() & it->netmask.to_ulong()) == it->dest.to_ulong())
+            if ((target & it->netmask.to_ulong()) == it->dest.to_ulong())
                 break;
         }
         return (it == rilist_.end()) ? default_rt : it;
