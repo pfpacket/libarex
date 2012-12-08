@@ -57,8 +57,11 @@ die()
 
 start_test()
 {
-    $AREX_ROOT/example/test/byte_order/$EXEC_FILE  || die
-    $AREX_ROOT/example/test/mac_address/$EXEC_FILE || die
+    for TEST_DIR in `find $AREX_ROOT/example/test/ -type d`
+    do
+        is_leaf_dir $TEST_DIR || continue
+        $TEST_DIR/$EXEC_FILE  || die
+    done
 }
 
 while getopts a:b:c:d:f:lnh OPTION

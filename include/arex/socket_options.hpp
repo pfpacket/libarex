@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <cstring>
+#include <boost/throw_exception.hpp>
 
 namespace boost {
 namespace asio {
@@ -18,19 +19,18 @@ namespace arex {
 // Return values of level(), name(), data() and size() are passed to setsockopt(2)
 //
 //
-   
 template<typename ValueType = int>
-class basic_option {
+class generic_option {
 public:
 
-    basic_option() = default;
-    basic_option(int level, int name, ValueType const &ov) 
+    generic_option() = default;
+    generic_option(int level, int name, ValueType const &ov) 
         :   level_(level),
             name_(name),
             size_(sizeof ov),
             optval_(ov)
         {}
-    basic_option(int level, int name, ValueType const &ov, size_t size) 
+    generic_option(int level, int name, ValueType const &ov, size_t size) 
         :   level_(level),
             name_(name),
             size_(size),
@@ -62,10 +62,77 @@ public:
         // size() returns the size of *data()
         return size_;
     }
-     
+
 private:
     int const level_, name_, size_;
     ValueType const optval_;
+};
+
+
+template<int Level, int Name, typename ValueType = int>
+class basic_option {
+public:
+
+    basic_option() = default;
+
+    basic_option(ValueType const& value) : optval_(value)
+    {
+    }
+
+    template<typename Protocol>
+    int level(Protocol const &p) const
+    {
+        return Level;
+    }
+
+    template<typename Protocol>
+    int name(Protocol const &p) const
+    {
+        return Name;
+    }
+
+    template<typename Protocol>
+    void *data(Protocol const &p)
+    {
+        // Should return a pointer that is convertible to void*
+        return reinterpret_cast<void *>(&optval_);
+    }
+
+    template<typename Protocol>
+    void const *data(Protocol const &p) const 
+    {
+        // Should return a pointer that is convertible to void*
+        return reinterpret_cast<void const *>(&optval_);
+    }
+
+    template<typename Protocol>
+    size_t size(Protocol const &p) const
+    {
+        // size() returns the size of *data()
+        return sizeof(optval_);
+    }
+
+    template <typename Protocol>
+    void resize(Protocol const& p, std::size_t s)
+    {
+        if (s != sizeof(optval_)) {
+            std::length_error ex("basic_option resize error");
+            boost::throw_exception(ex);
+        }
+    }
+
+    void set_value(ValueType const& val)
+    {
+        optval_ = val;
+    }
+
+    ValueType const& get_value() const
+    {
+        return optval_;
+    }
+
+private:
+    ValueType optval_;
 };
 
 
@@ -76,7 +143,7 @@ template<int Level, int Name, bool Init = true>
 class binary_option {
 public:
     binary_option() = default;
-    binary_option(bool ov) : optval(ov ? 1 : 0) {}
+    binary_option(bool ov) : optval_(ov ? 1 : 0) {}
     ~binary_option() = default;
 
     template<typename Protocol>
@@ -92,19 +159,44 @@ public:
     }
 
     template<typename Protocol>
+    void *data(Protocol const &p)
+    {
+        return reinterpret_cast<void *>(&optval_);
+    }
+    
+    template<typename Protocol>
     void const *data(Protocol const &p) const
     {
-        return reinterpret_cast<void const *>(&optval);
+        return reinterpret_cast<void const *>(&optval_);
     }
 
     template<typename Protocol>
     int size(Protocol const &p) const
     {
-        return sizeof(optval);
+        return sizeof(optval_);
     }
-     
+    
+    template <typename Protocol>
+    void resize(Protocol const& p, std::size_t s)
+    {
+        if (s != sizeof(optval_)) {
+            std::length_error ex("basic_option resize error");
+            boost::throw_exception(ex);
+        }
+    }
+
+    void set_value(bool val)
+    {
+        optval_ = val ? 1 : 0;
+    }
+
+    bool get_value() const
+    {
+        return optval_ ? true : false;
+    }
+
 private:
-    int optval = Init;
+    int optval_ = Init;
 };
 
 

@@ -14,7 +14,7 @@
 
 
 #include <arex/common.hpp>
-#include <arex/arex_options.hpp>
+#include <arex/socket_options.hpp>
 #include <arex/arex_protocol.hpp>
 #include <arex/arex_utils.hpp>
 #include <arex/ethernet_header.hpp>
