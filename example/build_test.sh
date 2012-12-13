@@ -14,16 +14,17 @@ EXAMPLE_DIR_LIST=""
 
 usage()
 {
-    echo "Usage: build_test.sh [-abcflnh]"
+    echo "Usage: build_test.sh [options]"
     echo "Options:"
-    echo "   -a arg    specify libarex root path (default: ./)"
-    echo "   -b arg    specify Boost root path   (default: ~/boost/)"
-    echo "   -c arg    specify C++ compiler      (default: g++)"
-    echo "   -d arg    set target directory as arg"
-    echo "   -f arg    add additional flags passed to compiler"
-    echo "   -l        clean up object files"
-    echo "   -n        never remove object files"
-    echo "   -h        print this help and exit"
+    echo "   -a arg     specify libarex root path (default: ./)"
+    echo "   -b arg     specify Boost root path   (default: ~/boost/)"
+    echo "   -c arg     specify C++ compiler      (default: g++)"
+    echo "   -d arg     set target directory as arg"
+    echo "   -f arg     add additional flags passed to compiler"
+    echo "   -l         clean up object files"
+    echo "   -n         never remove object files"
+    echo "   -u         do not test"
+    echo "   -h         print this help and exit"
 }
 
 clean_up_obj()
@@ -64,18 +65,19 @@ start_test()
     done
 }
 
-while getopts a:b:c:d:f:lnh OPTION
+while getopts a:b:c:d:f:lnuh OPTION
 do
     case $OPTION in
-        a)  AREX_ROOT=$OPTARG  ;;
-        b)  BOOST_ROOT=$OPTARG ;;
+        a)  AREX_ROOT=$OPTARG   ;;
+        b)  BOOST_ROOT=$OPTARG  ;;
         c)  CXX=$OPTARG ;;
         d)  EXAMPLE_DIR_LIST=$OPTARG
-            EXEC_TEST_SUITE=0  ;;
+            EXEC_TEST_SUITE=0   ;;
         f)  CXX_FLAGS="$CXX_FLAGS $OPTARG" ;;
         l)  clean_up_obj
             exit 0 ;;
-        n)  NO_REMOVE_OBJ=1 ;;
+        n)  NO_REMOVE_OBJ=1     ;;
+        u)  EXEC_TEST_SUITE=0   ;;
         h)  usage
             exit 0 ;;
         \?) usage
