@@ -62,7 +62,6 @@ private:
     // Interface mappers
     std::map<netif_t, netif_t> ifdest_; // destination interface
     std::map<netif_t, std::string> ifname_; // interfaces' name
-    std::map<netif_t, arex::mac_address> ifaddr_;   // interface address
     std::map<netif_t, arex::packet_p_all::socket&> ifsoc_;  // sockets
     std::map<netif_t, arex::packet_p_all::endpoint&> ifep_; // endpoint
     std::map<netif_t, buffer_type&> ifbuf_;
@@ -73,8 +72,6 @@ void interface_bridge::init_mapper()
 {
     ifdest_[NIC1] = NIC2;   ifdest_[NIC2] = NIC1;
     ifname_[NIC1] = nic1_;  ifname_[NIC2] = nic2_;
-    ifaddr_[NIC1] = ifhw_address(nic1_);
-    ifaddr_[NIC2] = ifhw_address(nic2_);
     ifsoc_.insert(make_ref_pair(NIC1, socket1_));
     ifsoc_.insert(make_ref_pair(NIC2, socket2_));
     ifep_.insert(make_ref_pair(NIC1, sender1_));
@@ -142,19 +139,6 @@ void interface_bridge::make_promisc(arex::packet_p_all::socket& socket, int ifnu
         std::bind(&arex::ps_opt_promisc, _1, ifnumber)
     );
     socket.set_option(opt);
-}
-
-arex::mac_address interface_bridge::ifhw_address(std::string const& dev)
-{
-    int fd = socket(AF_INET, SOCK_DGRAM, 0);
-    struct ifreq ifr;
-    ifr.ifr_addr.sa_family = AF_INET;
-    std::strncpy(ifr.ifr_name, dev.c_str(), IFNAMSIZ - 1);
-    ioctl(fd, SIOCGIFHWADDR, &ifr);
-    close(fd);
-    return arex::mac_address(
-        *reinterpret_cast<arex::mac_address::internal_type*>(&ifr.ifr_hwaddr.sa_data)
-        );
 }
 
 void interface_bridge::print_ether_header(arex::ethernet_header const& eth)
