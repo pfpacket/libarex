@@ -185,7 +185,7 @@ syn_port_mapper::set_syn_segment(buffer_type& sbuffer, int port)
 {
     sbuffer.consume(sbuffer.size());
     std::ostream os(&sbuffer);
-    
+
     arex::ipv4_header iphdr;
     iphdr.version(4);
     iphdr.header_length(iphdr.length() / iphdr.length_unit);

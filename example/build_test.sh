@@ -23,7 +23,7 @@ usage()
     echo "   -f arg     add additional flags passed to compiler"
     echo "   -l         clean up object files"
     echo "   -n         never remove object files"
-    echo "   -u         do not test"
+    echo "   -u         do not invoke tests"
     echo "   -h         print this help and exit"
 }
 
@@ -52,7 +52,7 @@ is_leaf_dir()
 die()
 {
     clean_up_obj
-    echo [-] Fatal Error occurred: Abort
+    echo [-] Fatal error occurred: aborted
     exit 1
 }
 

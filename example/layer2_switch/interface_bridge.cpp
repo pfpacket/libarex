@@ -107,7 +107,7 @@ void interface_bridge::recv_handler(
     boost::system::error_code const& err,
     int size, netif_t ifnum)
 {
-    if ( err )
+    if (err)
         std::cout << "[-] " << ifname_[ifnum] << ": Fatal: " << err.message() << std::endl;
     else { do {
         buffer_type& buffer = ifbuf_.at(ifnum);
@@ -121,7 +121,7 @@ void interface_bridge::recv_handler(
 
         arex::ethernet_header ethh;
         arex::streambuf_to_header(ethh, buffer);
-        std::cout << (boost::format("No.%d\t%s\t%4d bytes  ") % ++counter_ % ifname_[ifnum] % size).str();
+        std::cout << boost::format("No.%d\t%s\t%4d bytes  ") % ++counter_ % ifname_[ifnum] % size;
         print_ether_header(ethh);
         
         ifsoc_.at(ifdest_[ifnum]).send_to(
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 {
     int exit_code = EXIT_SUCCESS;
     try {
-        if ( argc < 3 )
+        if (argc < 3)
             throw std::runtime_error(
                 "Too few arguments\n"
                 "Usage: ./bridge NIC1 NIC2"
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
         interface_bridge bridge(io_service, argv[1], argv[2]);
         io_service.run();
     }
-    catch ( std::exception &e ) {
+    catch (std::exception &e) {
         std::cerr << "[-] Exception: " << e.what() << std::endl;
         exit_code = EXIT_FAILURE;
     }

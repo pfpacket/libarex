@@ -110,14 +110,14 @@ public:
 private:
 
     template<typename CharT, typename Traits>
-    auto init_proc_rt_stream(std::basic_istream<CharT, Traits>& is) -> decltype(is)
+    static auto init_proc_rt_stream(std::basic_istream<CharT, Traits>& is) -> decltype(is)
     {
         std::string buf;
         return std::getline(is, buf);
     }
 
     template<typename CharT, typename Traits>
-    auto read_route_info(std::basic_istream<CharT, Traits>& is, route_info& ri) -> decltype(is)
+    static auto read_route_info(std::basic_istream<CharT, Traits>& is, route_info& ri) -> decltype(is)
     {
         std::uint32_t dest, gateway, netmask;
         is  >> ri.ifname >> std::hex >> dest >> gateway >> std::dec
