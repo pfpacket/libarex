@@ -275,8 +275,7 @@ void ps_opt_promisc(packet_socket_option::option_type& mreq, int if_index)
 
 
 // Binary option for IP_HDRINCL
-template<bool Init>
-using ip_hdrincl = binary_option<SOL_IP, IP_HDRINCL, Init>;
+typedef binary_option<SOL_IP, IP_HDRINCL> ip_hdrincl;
 // Above is equal to arex::basic_option<int> iphdrincl(SOL_IP, IP_HDRINCL, 1);
 
 
