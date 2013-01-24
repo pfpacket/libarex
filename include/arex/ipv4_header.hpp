@@ -69,7 +69,7 @@ public:
     
     typedef struct iphdr header_type;
 
-    ipv4_header() : rep_{0}
+    ipv4_header() : rep_{}
     {
     }
 
