@@ -38,26 +38,26 @@ public:
         {}
 
     template<typename Protocol>
-    int level(Protocol const &p) const
+    int level(Protocol const &) const
     {
         return level_;
     }
 
     template<typename Protocol>
-    int name(Protocol const &p) const
+    int name(Protocol const &) const
     {
         return name_;
     }
 
     template<typename Protocol>
-    void const *data(Protocol const &p) const 
+    void const *data(Protocol const &) const 
     {
         // Should return a pointer that is convertible to void*
         return reinterpret_cast<void const *>(&optval_);
     }
 
     template<typename Protocol>
-    size_t size(Protocol const &p) const
+    size_t size(Protocol const &) const
     {
         // size() returns the size of *data()
         return size_;
@@ -80,40 +80,40 @@ public:
     }
 
     template<typename Protocol>
-    int level(Protocol const &p) const
+    int level(Protocol const &) const
     {
         return Level;
     }
 
     template<typename Protocol>
-    int name(Protocol const &p) const
+    int name(Protocol const &) const
     {
         return Name;
     }
 
     template<typename Protocol>
-    void *data(Protocol const &p)
+    void *data(Protocol const &)
     {
         // Should return a pointer that is convertible to void*
         return reinterpret_cast<void *>(&optval_);
     }
 
     template<typename Protocol>
-    void const *data(Protocol const &p) const 
+    void const *data(Protocol const &) const 
     {
         // Should return a pointer that is convertible to void*
         return reinterpret_cast<void const *>(&optval_);
     }
 
     template<typename Protocol>
-    size_t size(Protocol const &p) const
+    size_t size(Protocol const &) const
     {
         // size() returns the size of *data()
         return sizeof(optval_);
     }
 
     template <typename Protocol>
-    void resize(Protocol const& p, std::size_t s)
+    void resize(Protocol const&, std::size_t s)
     {
         if (s != sizeof(optval_)) {
             std::length_error ex("basic_option resize error");
@@ -147,37 +147,37 @@ public:
     ~binary_option() = default;
 
     template<typename Protocol>
-    int level(Protocol const &p) const
+    int level(Protocol const&) const
     {
         return Level;
     }
 
     template<typename Protocol>
-    int name(Protocol const &p) const
+    int name(Protocol const&) const
     {
         return Name;
     }
 
     template<typename Protocol>
-    void *data(Protocol const &p)
+    void *data(Protocol const&)
     {
         return reinterpret_cast<void *>(&optval_);
     }
     
     template<typename Protocol>
-    void const *data(Protocol const &p) const
+    void const *data(Protocol const&) const
     {
         return reinterpret_cast<void const *>(&optval_);
     }
 
     template<typename Protocol>
-    int size(Protocol const &p) const
+    int size(Protocol const&) const
     {
         return sizeof(optval_);
     }
     
     template <typename Protocol>
-    void resize(Protocol const& p, std::size_t s)
+    void resize(Protocol const&, std::size_t s)
     {
         if (s != sizeof(optval_)) {
             std::length_error ex("basic_option resize error");
@@ -229,25 +229,25 @@ public:
     }
 
     template<typename Protocol>
-    int level(Protocol const& p) const
+    int level(Protocol const&) const
     {
         return SOL_PACKET;
     }
 
     template<typename Protocol>
-    int name(Protocol const& p) const
+    int name(Protocol const&) const
     {
         return name_;
     }
 
     template<typename Protocol>
-    void const* data(Protocol const& p) const
+    void const* data(Protocol const&) const
     {
         return reinterpret_cast<void const*>(&mreq_);
     }
 
     template<typename Protocol>
-    int size(Protocol const& p) const
+    int size(Protocol const&) const
     {
         return sizeof mreq_;
     }

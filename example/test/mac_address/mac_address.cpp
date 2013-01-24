@@ -7,7 +7,7 @@
 
 namespace arex = boost::asio::ip::arex;
 
-int main(int argc, char **argv)
+int main()
 {
 
     arex::mac_address a("aa:bb:cc:dd:ee:ff");

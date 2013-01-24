@@ -13,7 +13,7 @@ void print_opt(struct timeval const& tv)
         << " usec=" << tv.tv_usec << std::endl;
 }
 
-int main(int argc, char const* argv[])
+int main()
 {
     asio::io_service io;
     asio::ip::tcp::socket socket(io, asio::ip::tcp::v4());

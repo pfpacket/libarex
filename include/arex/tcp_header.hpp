@@ -68,7 +68,7 @@ public:
     enum { default_window_value = 4096 };
     typedef struct tcphdr header_type;
 
-    tcp_header() : rep_{0} {}
+    tcp_header() : rep_{} {}
     explicit tcp_header(const header_type &tcph) : rep_(tcph) {}
 
     uint16_t source() const { return ntohs(rep_.source); }
@@ -129,7 +129,7 @@ public:
     void compute_checksum(uint32_t srcaddr, uint32_t destaddr)
     {
         check(0);
-        tcp_checksum tc = {{0}, {0}};
+        tcp_checksum tc = {{}, {}};
         tc.pseudo.ip_src   = htonl(srcaddr);
         tc.pseudo.ip_dst   = htonl(destaddr);
         tc.pseudo.zero     = 0;
