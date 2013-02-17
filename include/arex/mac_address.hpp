@@ -39,11 +39,7 @@ public:
 
     explicit mac_address(bytes_type const &abin) : addr_{{0}}
     {
-        std::copy(
-            abin.begin(),
-            abin.end(),
-            &addr_.ether_addr_octet[0]
-            );
+        std::copy(abin.begin(), abin.end(), &addr_.ether_addr_octet[0]);
     }
     
     explicit mac_address(std::string const &str) : addr_{{0}}
@@ -93,11 +89,8 @@ public:
     bytes_type to_bytes() const
     {
         bytes_type ret;
-        std::copy(
-            &addr_.ether_addr_octet[0],
-            &addr_.ether_addr_octet[0] + addr_length,
-            ret.begin()
-            );
+        std::copy(&addr_.ether_addr_octet[0],
+            &addr_.ether_addr_octet[0] + addr_length, ret.begin());
         return ret;
     }
 
@@ -112,8 +105,7 @@ private:
 
 
 template<typename Elem, typename Traits>
-std::basic_ostream<Elem, Traits> &operator<<(
-    std::basic_ostream<Elem, Traits> &os, mac_address const &addr)
+auto operator<<(std::basic_ostream<Elem, Traits> &os, mac_address const &addr) -> decltype(os)
 {
     os << addr.to_string();
     return os;
