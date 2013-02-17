@@ -45,12 +45,7 @@ private:
     static void make_promisc(arex::packet_p_all::socket&, int);
     static arex::mac_address ifhw_address(std::string const&);
     static void print_ether_header(arex::ethernet_header const&);
-    template<typename T1, typename T2>
-    static std::pair<T1, T2&> make_ref_pair(T1 key, T2& elem)
-    {
-        return std::pair<T1, T2&>(key, elem);
-    }
-    
+
     std::uint64_t counter_;
     arex::packet_p_all::socket socket1_, socket2_;
     arex::packet_p_all::endpoint sender1_, sender2_;
@@ -68,12 +63,12 @@ private:
 
 void interface_bridge::init_mapper(std::string const& nic1, std::string const& nic2)
 {
-    ifdest_[NIC1]   = NIC2;   ifdest_[NIC2] = NIC1;
-    ifname_[NIC1]   = nic1;  ifname_[NIC2] = nic2;
+    ifdest_[NIC1] = NIC2;  ifdest_[NIC2] = NIC1;
+    ifname_[NIC1] = nic1;  ifname_[NIC2] = nic2;
     ifsoc_.insert(std::make_pair(NIC1, std::ref(socket1_)));
     ifsoc_.insert(std::make_pair(NIC2, std::ref(socket2_)));
-    ifep_.insert(std::make_pair(NIC1, std::ref(sender1_)));
-    ifep_.insert(std::make_pair(NIC2, std::ref(sender2_)));
+    ifep_ .insert(std::make_pair(NIC1, std::ref(sender1_)));
+    ifep_ .insert(std::make_pair(NIC2, std::ref(sender2_)));
     ifbuf_.insert(std::make_pair(NIC1, std::ref(buffer1_)));
     ifbuf_.insert(std::make_pair(NIC2, std::ref(buffer2_)));
     ifhdl_.insert(std::make_pair(NIC1, std::ref(start1_)));
@@ -123,7 +118,7 @@ void interface_bridge::recv_handler(
                 std::to_string(std::max(ifname_[NIC1].length(), ifname_[NIC2].length()))
                 + "s  %4d bytes  ") % ++counter_ % ifname_[ifnum] % size;
         print_ether_header(ethh);
-        
+
         ifsoc_.at(ifdest_[ifnum]).get().send_to(
             buffer.data(),
             arex::packet_p_all::endpoint("0:0:0:0:0:0", ifname_[ifdest_[ifnum]])
