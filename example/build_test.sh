@@ -56,6 +56,11 @@ die()
     exit 1
 }
 
+print_compiler_version()
+{
+    $CXX -v || $CXX --version
+}
+
 start_test()
 {
     for TEST_DIR in `find $AREX_ROOT/example/test/ -type d`
@@ -96,6 +101,8 @@ if [ $? -ne 0 ]; then
     echo [-] Test failed ...compiling aborted
     exit 1
 fi
+
+print_compiler_version
 
 trap "signal_handler" INT
 for EXAMPLE_DIR in $EXAMPLE_DIR_LIST
