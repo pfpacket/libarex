@@ -5,14 +5,14 @@
 #
 
                     - Summary -
-Arex is a raw socket extension library for Boost.Asio
-Arex allows you to use Linux packet sockets with powerful Boost.Asio
-You can write the codes that perform sync/asynchronous operations like Asio
+ Arex is a raw socket extension library for Boost.Asio
+ Arex allows you to use Linux packet sockets with powerful Boost.Asio
+You can write programs that perform sync/asynchronous operations like Asio
   (`man 7 packet` for more information about packet sockets)
 
 
                     - Build -
-This library is Header-only. No need to build
+ This library is Header-only. No need to build
 
 
                  - Requirements -
@@ -46,6 +46,11 @@ This library is Header-only. No need to build
 * Socket options specialized for packet socket
 * Layer 4 protocol entry
 * Miscellaneous protocols' headers
+
+
+                  - LICENSE -
+ libarex is licensed under Boost Software License Version 1.0
+See LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt
 
 
                   - TODO -
