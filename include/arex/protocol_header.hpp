@@ -54,7 +54,7 @@ public:
     friend bool streambuf_to_header(
         protocol_header& header,
         boost::asio::streambuf const& buf,
-        std::size_t offset = 0
+        std::size_t offset
     );
 
 protected:
@@ -100,7 +100,7 @@ void copy_buffer_to_header(protocol_header& header, char const* buf)
 // Otherwise return true
 bool streambuf_to_header(
     protocol_header& header,
-    boost::asio::streambuf const& buf, std::size_t offset)
+    boost::asio::streambuf const& buf, std::size_t offset = 0)
 {
     // Length check
     if (buf.size() < header.length() + offset)

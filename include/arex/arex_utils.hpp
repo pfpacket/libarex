@@ -10,6 +10,18 @@ namespace asio {
 namespace ip {
 namespace arex {
 
+#ifdef htons
+#undef htons
+#endif
+#ifdef htonl
+#undef htonl
+#endif
+#ifdef ntohs
+#undef ntohs
+#endif
+#ifdef ntohl
+#undef ntohl
+#endif
 
 inline namespace network {
 

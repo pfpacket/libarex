@@ -90,6 +90,7 @@ do
     esac
 done
 
+[ "$CXX" = "g++" ] && CXX_FLAGS+=" -Wno-unused-local-typedefs"
 CXX_INCL="-I $BOOST_ROOT/include/ -I $AREX_ROOT/include"
 CXX_LIBS="-L $BOOST_ROOT/lib/ -lpthread -lboost_system"
 if [ "${EXAMPLE_DIR_LIST}" = "" ]; then

@@ -341,7 +341,7 @@ public:
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler)
   {
     service_impl_.async_receive_from(impl, buffers, sender_endpoint, flags,
-        BOOST_ASIO_MOVE_CAST(ReadHandler)(handler));
+        handler);
   }
 
 private:
